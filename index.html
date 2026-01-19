@@ -1,1 +1,560 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>CONCEPT SPACE</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --bg: #000000;
+            --card: #141414;
+            --text: #ffffff;
+            --accent: #00ff88;
+            --accent-glow: rgba(0, 255, 136, 0.5);
+            --danger: #ff3333;
+        }
 
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
+
+        body {
+            background-color: var(--bg);
+            color: var(--text);
+            padding-bottom: 100px;
+            min-height: 100vh;
+        }
+
+        /* HEADER */
+        header {
+            position: sticky; top: 0; z-index: 50;
+            background: rgba(0,0,0,0.85);
+            backdrop-filter: blur(15px);
+            padding: 15px 20px;
+            display: flex; justify-content: space-between; align-items: center;
+            border-bottom: 1px solid #222;
+        }
+
+        .brand {
+            font-size: 18px; font-weight: 900; letter-spacing: 1px;
+            background: linear-gradient(45deg, #fff, #888);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            text-transform: uppercase;
+        }
+
+        .admin-login-btn {
+            font-size: 12px; color: #555; border: 1px solid #333;
+            padding: 5px 10px; border-radius: 15px; cursor: pointer;
+        }
+
+        /* LOADERS & GRID */
+        .loader { text-align: center; padding: 40px; color: var(--accent); display: none; }
+        
+        .grid {
+            display: grid; grid-template-columns: 1fr 1fr; gap: 12px; padding: 15px;
+        }
+
+        .card {
+            background: var(--card); border-radius: 16px; overflow: hidden;
+            border: 1px solid #222; position: relative;
+            display: flex; flex-direction: column;
+            transition: transform 0.1s;
+        }
+        .card:active { transform: scale(0.96); }
+
+        .img-wrap {
+            width: 100%; padding-top: 100%;
+            position: relative; background: #0a0a0a;
+        }
+
+        .prod-img {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            object-fit: cover;
+        }
+
+        .no-img {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            display: flex; align-items: center; justify-content: center;
+            color: #333; flex-direction: column;
+        }
+
+        .info { padding: 12px; flex-grow: 1; display: flex; flex-direction: column; justify-content: space-between; }
+        .name { font-size: 13px; font-weight: 700; margin-bottom: 5px; line-height: 1.3; }
+        .price { font-size: 15px; font-weight: 800; color: var(--accent); text-shadow: 0 0 10px rgba(0,255,136,0.2); }
+
+        /* MODAL */
+        .modal-bg {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.8); z-index: 100; opacity: 0; pointer-events: none; transition: 0.3s;
+            backdrop-filter: blur(5px);
+        }
+        .modal-bg.active { opacity: 1; pointer-events: all; }
+
+        .sheet {
+            position: fixed; bottom: 0; left: 0; width: 100%;
+            background: #111; border-radius: 25px 25px 0 0;
+            padding: 25px; z-index: 101; transform: translateY(100%); transition: 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+            border-top: 1px solid var(--accent); box-shadow: 0 -10px 50px rgba(0,255,136,0.1);
+        }
+        .sheet.active { transform: translateY(0); }
+
+        .sheet-head { display: flex; gap: 15px; margin-bottom: 20px; }
+        .sheet-img { width: 80px; height: 80px; border-radius: 12px; object-fit: cover; background: #222; }
+        
+        .chips { display: flex; flex-wrap: wrap; gap: 8px; margin: 15px 0; }
+        .chip {
+            padding: 8px 14px; background: #222; border-radius: 12px; font-size: 12px;
+            color: #888; border: 1px solid #333; transition: 0.2s;
+        }
+        .chip.selected {
+            background: rgba(0,255,136,0.15); border-color: var(--accent); color: var(--accent); font-weight: bold;
+        }
+
+        .qty-ctrl {
+            display: flex; justify-content: space-between; align-items: center;
+            background: #1a1a1a; padding: 6px; border-radius: 12px; margin-bottom: 20px;
+        }
+        .q-btn { width: 40px; height: 40px; background: #333; border: none; color: white; border-radius: 8px; font-size: 18px; }
+        .q-val { font-size: 18px; font-weight: bold; width: 40px; text-align: center; }
+
+        .main-btn {
+            width: 100%; padding: 16px; border: none; border-radius: 14px;
+            background: var(--accent); color: #000; font-size: 16px; font-weight: 800;
+            text-transform: uppercase; box-shadow: 0 0 20px var(--accent-glow);
+            display: flex; justify-content: space-between; align-items: center;
+        }
+
+        /* ADMIN PANEL */
+        .admin-panel {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: #000; z-index: 200; padding: 20px; overflow-y: auto; display: none;
+        }
+        .admin-panel.active { display: block; }
+        
+        .form-group { margin-bottom: 15px; }
+        .inp {
+            width: 100%; padding: 14px; background: #1a1a1a; border: 1px solid #333;
+            color: white; border-radius: 10px; font-size: 14px; outline: none;
+        }
+        .inp:focus { border-color: var(--accent); }
+
+        .file-upload {
+            height: 120px; border: 2px dashed #444; border-radius: 12px;
+            display: flex; align-items: center; justify-content: center;
+            flex-direction: column; color: #666; position: relative; overflow: hidden;
+        }
+        .file-upload img { position: absolute; width: 100%; height: 100%; object-fit: cover; }
+
+        /* TOAST */
+        .toast {
+            position: fixed; top: 20px; left: 50%; transform: translateX(-50%) translateY(-100px);
+            background: #222; border: 1px solid var(--accent); color: white;
+            padding: 10px 20px; border-radius: 50px; z-index: 500; transition: 0.3s;
+            font-size: 14px; font-weight: 600; display: flex; align-items: center; gap: 8px;
+        }
+        .toast.show { transform: translateX(-50%) translateY(0); }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="brand"><i class="fas fa-bolt" style="color:var(--accent)"></i> CONCEPT SPACE</div>
+        <div class="admin-login-btn" id="loginBtn">Войти</div>
+    </header>
+
+    <div id="loader" class="loader"><i class="fas fa-circle-notch fa-spin fa-2x"></i><br>Загрузка...</div>
+    <div class="grid" id="grid"></div>
+
+    <div class="modal-bg" id="modalBg"></div>
+    <div class="sheet" id="sheet">
+        <div class="sheet-head">
+            <img src="" class="sheet-img" id="sImg">
+            <div>
+                <h2 id="sTitle" style="font-size: 18px; margin-bottom: 5px;">Product</h2>
+                <div id="sDesc" style="font-size: 12px; color: #888; max-height: 60px; overflow-y: auto;"></div>
+            </div>
+        </div>
+
+        <div style="font-size: 10px; color: #666; font-weight: 700;">ВЫБОР ВКУСА / ТИПА</div>
+        <div class="chips" id="sFlavors"></div>
+
+        <div style="font-size: 10px; color: #666; font-weight: 700; margin-bottom: 5px;">КОЛИЧЕСТВО</div>
+        <div class="qty-ctrl">
+            <button class="q-btn" onclick="updQty(-1)">-</button>
+            <div class="q-val" id="sQty">1</div>
+            <button class="q-btn" onclick="updQty(1)">+</button>
+        </div>
+
+        <button class="main-btn" id="orderBtn">
+            <span>ЗАКАЗАТЬ</span>
+            <span id="sTotal">0 €</span>
+        </button>
+    </div>
+
+    <div class="admin-panel" id="adminPanel">
+        <div style="display:flex; justify-content:space-between; margin-bottom:20px;">
+            <h2 style="color:var(--accent)">АДМИНКА</h2>
+            <button onclick="toggleAdmin(false)" style="background:none; border:none; color:#fff; font-size:24px;">&times;</button>
+        </div>
+
+        <div style="background:#111; padding:15px; border-radius:15px; margin-bottom:20px;">
+            <h3 style="margin-bottom:10px; font-size:16px;">Добавить товар</h3>
+            
+            <div class="form-group">
+                <div class="file-upload" onclick="document.getElementById('fileIn').click()">
+                    <i class="fas fa-camera" style="font-size:24px; margin-bottom:5px;"></i>
+                    <span style="font-size:12px;">Нажми для фото</span>
+                    <img id="previewImg" style="display:none;">
+                    <input type="file" id="fileIn" hidden accept="image/*">
+                </div>
+            </div>
+
+            <div class="form-group"><input id="inpName" class="inp" placeholder="Название товара"></div>
+            <div class="form-group"><input id="inpPrice" type="number" class="inp" placeholder="Цена (€)"></div>
+            <div class="form-group"><input id="inpFlavors" class="inp" placeholder="Вкусы (через запятую)"></div>
+            <div class="form-group"><textarea id="inpDesc" class="inp" rows="3" placeholder="Описание"></textarea></div>
+            
+            <button class="main-btn" onclick="saveProduct()">
+                <i class="fas fa-cloud-upload-alt" style="margin-right:10px;"></i> СОХРАНИТЬ В ОБЛАКО
+            </button>
+        </div>
+
+        <h3 style="color:#666; font-size:14px; margin-bottom:10px;">СПИСОК В БАЗЕ</h3>
+        <div id="adminList" style="display:flex; flex-direction:column; gap:10px; padding-bottom:50px;"></div>
+    </div>
+
+    <div id="authModal" style="position:fixed;top:0;left:0;width:100%;height:100%;background:#000;z-index:1000;display:none;align-items:center;justify-content:center;flex-direction:column;padding:30px;">
+        <h2 style="color:var(--accent); margin-bottom:20px;">ВХОД АДМИНА</h2>
+        <input type="password" id="passInput" class="inp" placeholder="Пароль" style="margin-bottom:20px; text-align:center;">
+        <div style="display:flex; gap:10px; width:100%;">
+            <button class="main-btn" style="background:#333; color:#fff;" onclick="document.getElementById('authModal').style.display='none'">Отмена</button>
+            <button class="main-btn" onclick="checkPass()">Войти</button>
+        </div>
+    </div>
+
+    <div class="toast" id="toast"><i class="fas fa-check"></i> <span>Готово</span></div>
+
+    <script>
+        // ==========================================================
+        // ⚙️ ТВОИ ДАННЫЕ УЖЕ ВСТАВЛЕНЫ
+        // ==========================================================
+        
+        const ADMIN_PASSWORD = "Inn2708inNfnaf1234"; // Пароль
+        const MY_USERNAME = "Lacky337"; // Твой ник
+
+        // ТВОИ КЛЮЧИ JSONBIN (Я их вставил правильно)
+        const BIN_ID = "696e703dae596e708fe71325";
+        const API_KEY = "$2a$10$KhVEyfwrswNvk7dNQEJWPezsQABoaOnmNm/jtb8vqYWBJrL8eciFm";
+
+        // ==========================================================
+
+        const tg = window.Telegram.WebApp;
+        tg.ready(); tg.expand();
+        document.documentElement.style.setProperty('--bg', tg.themeParams.bg_color || '#000000');
+
+        let products = [];
+        let curProd = null;
+        let curQty = 1;
+        let curFlavor = '';
+        let editId = null;
+
+        // --- ОБЛАЧНЫЕ ФУНКЦИИ ---
+        
+        async function loadFromCloud() {
+            document.getElementById('loader').style.display = 'block';
+            document.getElementById('grid').style.display = 'none';
+
+            try {
+                // Загружаем данные
+                const res = await fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}/latest`, {
+                    headers: { 'X-Master-Key': API_KEY }
+                });
+                
+                if(!res.ok) throw new Error("Ошибка доступа");
+                
+                const data = await res.json();
+                
+                // Проверяем формат данных
+                if (data.record && Array.isArray(data.record)) {
+                    products = data.record;
+                } else {
+                    products = []; // Если база пустая или странная
+                }
+                
+                renderGrid();
+                renderAdminList();
+            } catch (e) {
+                showToast("Ошибка загрузки: " + e.message, true);
+                grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:20px;">Ошибка связи с базой</div>';
+            } finally {
+                document.getElementById('loader').style.display = 'none';
+                document.getElementById('grid').style.display = 'grid';
+            }
+        }
+
+        async function saveToCloud() {
+            showToast("⏳ Сохраняю базу...");
+            try {
+                const res = await fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-Master-Key': API_KEY
+                    },
+                    body: JSON.stringify(products)
+                });
+
+                if(!res.ok) throw new Error("Не удалось сохранить");
+                showToast("✅ База обновлена!");
+            } catch (e) {
+                showToast("Ошибка: " + e.message, true);
+            }
+        }
+
+        // --- ИНТЕРФЕЙС ---
+
+        function renderGrid() {
+            const grid = document.getElementById('grid');
+            grid.innerHTML = '';
+
+            if(products.length === 0) {
+                grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;color:#666;padding:40px;">Товаров нет. Добавьте в админке.</div>';
+                return;
+            }
+
+            products.forEach(p => {
+                const card = document.createElement('div');
+                card.className = 'card';
+                
+                let imgHtml = p.image 
+                    ? `<img src="${p.image}" class="prod-img">`
+                    : `<div class="no-img"><i class="fas fa-meteor"></i></div>`;
+
+                card.innerHTML = `
+                    <div class="img-wrap">${imgHtml}</div>
+                    <div class="info">
+                        <div class="name">${p.name}</div>
+                        <div class="price">${p.price} €</div>
+                    </div>
+                `;
+                card.onclick = () => openSheet(p.id);
+                grid.appendChild(card);
+            });
+        }
+
+        function openSheet(id) {
+            curProd = products.find(p => p.id === id);
+            if(!curProd) return;
+
+            curQty = 1;
+            
+            const imgEl = document.getElementById('sImg');
+            if(curProd.image) {
+                imgEl.src = curProd.image;
+                imgEl.style.display = 'block';
+            } else {
+                imgEl.style.display = 'none';
+            }
+
+            document.getElementById('sTitle').innerText = curProd.name;
+            document.getElementById('sDesc').innerText = curProd.desc || "";
+            
+            const chipCon = document.getElementById('sFlavors');
+            chipCon.innerHTML = '';
+            if(curProd.flavors && curProd.flavors.length) {
+                curFlavor = curProd.flavors[0];
+                curProd.flavors.forEach(f => {
+                    const chip = document.createElement('div');
+                    chip.className = `chip ${f === curFlavor ? 'selected' : ''}`;
+                    chip.innerText = f;
+                    chip.onclick = () => {
+                        curFlavor = f;
+                        document.querySelectorAll('.chip').forEach(c => c.classList.remove('selected'));
+                        chip.classList.add('selected');
+                        tg.HapticFeedback.selectionChanged();
+                    };
+                    chipCon.appendChild(chip);
+                });
+            } else {
+                curFlavor = "Стандарт";
+                chipCon.innerHTML = '<span style="font-size:12px;color:#555;">Опций нет</span>';
+            }
+
+            updateTotal();
+            document.getElementById('modalBg').classList.add('active');
+            document.getElementById('sheet').classList.add('active');
+            tg.HapticFeedback.impactOccurred('medium');
+        }
+
+        function updQty(d) {
+            if(curQty + d < 1) return;
+            curQty += d;
+            document.getElementById('sQty').innerText = curQty;
+            updateTotal();
+            tg.HapticFeedback.selectionChanged();
+        }
+
+        function updateTotal() {
+            document.getElementById('sTotal').innerText = (parseFloat(curProd.price) * curQty).toFixed(2) + ' €';
+        }
+
+        document.getElementById('orderBtn').onclick = () => {
+            const sum = (parseFloat(curProd.price) * curQty).toFixed(2);
+            const msg = `⚡️ *ЗАКАЗ CONCEPT SPACE*\n\n` +
+                        `📦 *Товар:* ${curProd.name}\n` +
+                        `🎨 *Тип:* ${curFlavor}\n` +
+                        `🔢 *Кол-во:* ${curQty}\n` +
+                        `💰 *Сумма:* ${sum} €`;
+            
+            tg.close();
+            window.open(`https://t.me/${MY_USERNAME}?text=${encodeURIComponent(msg)}`, '_blank');
+        };
+
+        // --- АДМИНКА ---
+
+        document.getElementById('loginBtn').onclick = () => {
+            document.getElementById('authModal').style.display = 'flex';
+        };
+
+        function checkPass() {
+            const p = document.getElementById('passInput').value;
+            if(p === ADMIN_PASSWORD) {
+                document.getElementById('authModal').style.display = 'none';
+                toggleAdmin(true);
+            } else {
+                showToast("Неверный пароль", true);
+            }
+        }
+
+        function toggleAdmin(show) {
+            const p = document.getElementById('adminPanel');
+            if(show) {
+                p.classList.add('active');
+                renderAdminList();
+            } else {
+                p.classList.remove('active');
+                clearForm();
+            }
+        }
+
+        // Обработка ФОТО (Сжатие)
+        document.getElementById('fileIn').onchange = (e) => {
+            const file = e.target.files[0];
+            if(!file) return;
+            
+            const reader = new FileReader();
+            reader.onload = (ev) => {
+                const img = new Image();
+                img.onload = () => {
+                    const canvas = document.createElement('canvas');
+                    const ctx = canvas.getContext('2d');
+                    
+                    const MAX = 300;
+                    let w = img.width, h = img.height;
+                    if(w > h) { if(w>MAX) { h*=MAX/w; w=MAX; } }
+                    else { if(h>MAX) { w*=MAX/h; h=MAX; } }
+                    
+                    canvas.width = w; canvas.height = h;
+                    ctx.drawImage(img, 0, 0, w, h);
+                    
+                    const data = canvas.toDataURL('image/jpeg', 0.6);
+                    document.getElementById('previewImg').src = data;
+                    document.getElementById('previewImg').style.display = 'block';
+                };
+                img.src = ev.target.result;
+            };
+            reader.readAsDataURL(file);
+        };
+
+        async function saveProduct() {
+            const name = document.getElementById('inpName').value;
+            const price = document.getElementById('inpPrice').value;
+            const flavors = document.getElementById('inpFlavors').value.split(',').filter(x=>x.trim());
+            const desc = document.getElementById('inpDesc').value;
+            const img = document.getElementById('previewImg').src;
+
+            if(!name || !price) {
+                showToast("Заполни название и цену!", true);
+                return;
+            }
+
+            const newProd = {
+                id: editId || Date.now(),
+                name, 
+                price: parseFloat(price),
+                flavors,
+                desc,
+                image: img.startsWith('data:') ? img : ''
+            };
+
+            if(editId) {
+                const idx = products.findIndex(p => p.id === editId);
+                products[idx] = newProd;
+                editId = null;
+            } else {
+                products.unshift(newProd); 
+            }
+
+            renderAdminList();
+            renderGrid();
+            clearForm();
+
+            await saveToCloud(); // ОТПРАВКА В БАЗУ
+        }
+
+        function renderAdminList() {
+            const lst = document.getElementById('adminList');
+            lst.innerHTML = '';
+            products.forEach(p => {
+                const row = document.createElement('div');
+                row.style.cssText = "background:#1a1a1a; padding:10px; border-radius:10px; border:1px solid #333; display:flex; align-items:center; gap:10px;";
+                
+                let img = p.image ? `<img src="${p.image}" style="width:40px;height:40px;border-radius:6px;object-fit:cover;">` : `<div style="width:40px;height:40px;background:#333;border-radius:6px;"></div>`;
+
+                row.innerHTML = `
+                    ${img}
+                    <div style="flex:1;">
+                        <div style="font-weight:bold; font-size:14px;">${p.name}</div>
+                        <div style="color:var(--accent); font-size:12px;">${p.price} €</div>
+                    </div>
+                    <i class="fas fa-trash" style="padding:10px; color:var(--danger);" onclick="delProd(${p.id})"></i>
+                `;
+                lst.appendChild(row);
+            });
+        }
+
+        async function delProd(id) {
+            if(confirm("Удалить?")) {
+                products = products.filter(p => p.id !== id);
+                renderAdminList();
+                renderGrid();
+                await saveToCloud();
+            }
+        }
+
+        function clearForm() {
+            editId = null;
+            document.querySelectorAll('.inp').forEach(i => i.value = '');
+            document.getElementById('previewImg').src = '';
+            document.getElementById('previewImg').style.display = 'none';
+        }
+
+        function showToast(msg, isError = false) {
+            const t = document.getElementById('toast');
+            t.innerHTML = isError ? `<i class="fas fa-exclamation-circle"></i> ${msg}` : `<i class="fas fa-check"></i> ${msg}`;
+            t.style.borderColor = isError ? 'var(--danger)' : 'var(--accent)';
+            t.classList.add('show');
+            setTimeout(() => t.classList.remove('show'), 3000);
+        }
+
+        document.getElementById('modalBg').onclick = () => {
+            document.getElementById('modalBg').classList.remove('active');
+            document.getElementById('sheet').classList.remove('active');
+        };
+
+        // ЗАПУСК
+        loadFromCloud();
+
+    </script>
+</body>
+</html>
