@@ -11,13 +11,12 @@
             --bg: #000000;
             --card: #141414;
             --text: #ffffff;
-            --accent: #00ff88; /* Cyber Green */
+            --accent: #00ff88;
             --accent-glow: rgba(0, 255, 136, 0.5);
             --danger: #ff3333;
-            --glass: rgba(20, 20, 20, 0.9);
         }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; }
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
 
         body {
             background-color: var(--bg);
@@ -26,7 +25,7 @@
             min-height: 100vh;
         }
 
-        /* --- HEADER --- */
+        /* HEADER */
         header {
             position: sticky; top: 0; z-index: 50;
             background: rgba(0,0,0,0.85);
@@ -48,7 +47,7 @@
             padding: 5px 10px; border-radius: 15px; cursor: pointer;
         }
 
-        /* --- GRID --- */
+        /* LOADERS & GRID */
         .loader { text-align: center; padding: 40px; color: var(--accent); display: none; }
         
         .grid {
@@ -64,7 +63,7 @@
         .card:active { transform: scale(0.96); }
 
         .img-wrap {
-            width: 100%; padding-top: 100%; /* 1:1 Aspect Ratio */
+            width: 100%; padding-top: 100%;
             position: relative; background: #0a0a0a;
         }
 
@@ -82,9 +81,8 @@
         .info { padding: 12px; flex-grow: 1; display: flex; flex-direction: column; justify-content: space-between; }
         .name { font-size: 13px; font-weight: 700; margin-bottom: 5px; line-height: 1.3; }
         .price { font-size: 15px; font-weight: 800; color: var(--accent); text-shadow: 0 0 10px rgba(0,255,136,0.2); }
-        .sold-out { opacity: 0.5; pointer-events: none; filter: grayscale(1); }
 
-        /* --- MODAL (Product Sheet) --- */
+        /* MODAL */
         .modal-bg {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0,0,0,0.8); z-index: 100; opacity: 0; pointer-events: none; transition: 0.3s;
@@ -126,7 +124,7 @@
             display: flex; justify-content: space-between; align-items: center;
         }
 
-        /* --- ADMIN PANEL --- */
+        /* ADMIN PANEL */
         .admin-panel {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: #000; z-index: 200; padding: 20px; overflow-y: auto; display: none;
@@ -147,7 +145,7 @@
         }
         .file-upload img { position: absolute; width: 100%; height: 100%; object-fit: cover; }
 
-        /* --- TOAST --- */
+        /* TOAST */
         .toast {
             position: fixed; top: 20px; left: 50%; transform: translateX(-50%) translateY(-100px);
             background: #222; border: 1px solid var(--accent); color: white;
@@ -164,7 +162,7 @@
         <div class="admin-login-btn" id="loginBtn">Войти</div>
     </header>
 
-    <div id="loader" class="loader"><i class="fas fa-circle-notch fa-spin fa-2x"></i><br>Загрузка товаров...</div>
+    <div id="loader" class="loader"><i class="fas fa-circle-notch fa-spin fa-2x"></i><br>Загрузка...</div>
     <div class="grid" id="grid"></div>
 
     <div class="modal-bg" id="modalBg"></div>
@@ -200,7 +198,7 @@
         </div>
 
         <div style="background:#111; padding:15px; border-radius:15px; margin-bottom:20px;">
-            <h3 style="margin-bottom:10px; font-size:16px;">Добавить / Изменить</h3>
+            <h3 style="margin-bottom:10px; font-size:16px;">Добавить товар</h3>
             
             <div class="form-group">
                 <div class="file-upload" onclick="document.getElementById('fileIn').click()">
@@ -221,7 +219,7 @@
             </button>
         </div>
 
-        <h3 style="color:#666; font-size:14px; margin-bottom:10px;">СПИСОК ТОВАРОВ</h3>
+        <h3 style="color:#666; font-size:14px; margin-bottom:10px;">СПИСОК В БАЗЕ</h3>
         <div id="adminList" style="display:flex; flex-direction:column; gap:10px; padding-bottom:50px;"></div>
     </div>
 
@@ -238,22 +236,15 @@
 
     <script>
         // ==========================================================
-        // ⚙️ НАСТРОЙКИ (ВСТАВЬ СВОИ ДАННЫЕ СЮДА)
+        // ⚙️ ТВОИ ДАННЫЕ УЖЕ ВСТАВЛЕНЫ
         // ==========================================================
         
-        // 1. Вставь ID из initDataUnsafe.user.id (чтобы входить автоматически)
-        // Или просто используй пароль.
-        const MY_TELEGRAM_ID = 0; 
-        
-        // 2. Пароль для входа в админку (на всякий случай)
-        const ADMIN_PASSWORD = "Inn2708inNfnaf1234"; 
+        const ADMIN_PASSWORD = "Inn2708inNfnaf1234"; // Пароль
+        const MY_USERNAME = "Lacky337"; // Твой ник
 
-        // 3. Твой ник в Telegram (без @), куда придет заказ
-        const MY_USERNAME = "Lacky337";
-
-        // 4. ДАННЫЕ ОТ JSONBIN.IO (ОБЯЗАТЕЛЬНО!)
-        const BIN_ID = "696e703dae596e708fe71325"; // Например: 65a6f...
-        const API_KEY = "$2a$10$KhVEyfwrswNvk7dNQEJWPezsQABoaOnmNm/jtb8vqYWBJrL8eciFm"; // Например: $2a$10...
+        // ТВОИ КЛЮЧИ JSONBIN (Я их вставил правильно)
+        const BIN_ID = "696e703dae596e708fe71325";
+        const API_KEY = "$2a$10$KhVEyfwrswNvk7dNQEJWPezsQABoaOnmNm/jtb8vqYWBJrL8eciFm";
 
         // ==========================================================
 
@@ -270,28 +261,31 @@
         // --- ОБЛАЧНЫЕ ФУНКЦИИ ---
         
         async function loadFromCloud() {
-            if(BIN_ID.includes("696e703dae596e708fe71325")) {
-                showToast("$2a$10$KhVEyfwrswNvk7dNQEJWPezsQABoaOnmNm/jtb8vqYWBJrL8eciFm", true);
-                return;
-            }
-
             document.getElementById('loader').style.display = 'block';
             document.getElementById('grid').style.display = 'none';
 
             try {
-                // Добавляем timestamp чтобы телеграм не кэшировал запрос
-                const res = await fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}/latest?t=${Date.now()}`, {
+                // Загружаем данные
+                const res = await fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}/latest`, {
                     headers: { 'X-Master-Key': API_KEY }
                 });
                 
                 if(!res.ok) throw new Error("Ошибка доступа");
                 
                 const data = await res.json();
-                products = Array.isArray(data.record) ? data.record : [];
+                
+                // Проверяем формат данных
+                if (data.record && Array.isArray(data.record)) {
+                    products = data.record;
+                } else {
+                    products = []; // Если база пустая или странная
+                }
+                
                 renderGrid();
                 renderAdminList();
             } catch (e) {
                 showToast("Ошибка загрузки: " + e.message, true);
+                grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:20px;">Ошибка связи с базой</div>';
             } finally {
                 document.getElementById('loader').style.display = 'none';
                 document.getElementById('grid').style.display = 'grid';
@@ -299,7 +293,7 @@
         }
 
         async function saveToCloud() {
-            showToast("⏳ Сохраняю в облако...");
+            showToast("⏳ Сохраняю базу...");
             try {
                 const res = await fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}`, {
                     method: 'PUT',
@@ -311,20 +305,20 @@
                 });
 
                 if(!res.ok) throw new Error("Не удалось сохранить");
-                showToast("✅ База обновлена для всех!");
+                showToast("✅ База обновлена!");
             } catch (e) {
                 showToast("Ошибка: " + e.message, true);
             }
         }
 
-        // --- ЛОГИКА ИНТЕРФЕЙСА ---
+        // --- ИНТЕРФЕЙС ---
 
         function renderGrid() {
             const grid = document.getElementById('grid');
             grid.innerHTML = '';
 
             if(products.length === 0) {
-                grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;color:#666;padding:40px;">Товаров пока нет</div>';
+                grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;color:#666;padding:40px;">Товаров нет. Добавьте в админке.</div>';
                 return;
             }
 
@@ -365,7 +359,6 @@
             document.getElementById('sTitle').innerText = curProd.name;
             document.getElementById('sDesc').innerText = curProd.desc || "";
             
-            // Вкусы
             const chipCon = document.getElementById('sFlavors');
             chipCon.innerHTML = '';
             if(curProd.flavors && curProd.flavors.length) {
@@ -417,15 +410,10 @@
             window.open(`https://t.me/${MY_USERNAME}?text=${encodeURIComponent(msg)}`, '_blank');
         };
 
-        // --- АДМИНСКАЯ ЧАСТЬ ---
+        // --- АДМИНКА ---
 
         document.getElementById('loginBtn').onclick = () => {
-            // Проверяем ID телеграма
-            if (tg.initDataUnsafe?.user?.id === MY_TELEGRAM_ID && MY_TELEGRAM_ID !== 0) {
-                toggleAdmin(true);
-            } else {
-                document.getElementById('authModal').style.display = 'flex';
-            }
+            document.getElementById('authModal').style.display = 'flex';
         };
 
         function checkPass() {
@@ -461,7 +449,6 @@
                     const canvas = document.createElement('canvas');
                     const ctx = canvas.getContext('2d');
                     
-                    // Сжимаем до 300px (для экономии места в JSONBin)
                     const MAX = 300;
                     let w = img.width, h = img.height;
                     if(w > h) { if(w>MAX) { h*=MAX/w; w=MAX; } }
@@ -470,7 +457,6 @@
                     canvas.width = w; canvas.height = h;
                     ctx.drawImage(img, 0, 0, w, h);
                     
-                    // Сжимаем качество до 0.6
                     const data = canvas.toDataURL('image/jpeg', 0.6);
                     document.getElementById('previewImg').src = data;
                     document.getElementById('previewImg').style.display = 'block';
@@ -506,16 +492,14 @@
                 products[idx] = newProd;
                 editId = null;
             } else {
-                products.unshift(newProd); // Добавляем в начало
+                products.unshift(newProd); 
             }
 
-            // Рендер локально
             renderAdminList();
             renderGrid();
             clearForm();
 
-            // Сохранение в облако
-            await saveToCloud();
+            await saveToCloud(); // ОТПРАВКА В БАЗУ
         }
 
         function renderAdminList() {
@@ -533,29 +517,14 @@
                         <div style="font-weight:bold; font-size:14px;">${p.name}</div>
                         <div style="color:var(--accent); font-size:12px;">${p.price} €</div>
                     </div>
-                    <i class="fas fa-pen" style="padding:10px; color:#aaa;" onclick="editProd(${p.id})"></i>
                     <i class="fas fa-trash" style="padding:10px; color:var(--danger);" onclick="delProd(${p.id})"></i>
                 `;
                 lst.appendChild(row);
             });
         }
 
-        function editProd(id) {
-            const p = products.find(x => x.id === id);
-            editId = id;
-            document.getElementById('inpName').value = p.name;
-            document.getElementById('inpPrice').value = p.price;
-            document.getElementById('inpFlavors').value = p.flavors.join(', ');
-            document.getElementById('inpDesc').value = p.desc;
-            if(p.image) {
-                document.getElementById('previewImg').src = p.image;
-                document.getElementById('previewImg').style.display = 'block';
-            }
-            document.getElementById('adminPanel').scrollTop = 0;
-        }
-
         async function delProd(id) {
-            if(confirm("Удалить этот товар?")) {
+            if(confirm("Удалить?")) {
                 products = products.filter(p => p.id !== id);
                 renderAdminList();
                 renderGrid();
@@ -578,7 +547,6 @@
             setTimeout(() => t.classList.remove('show'), 3000);
         }
 
-        // Закрытие по клику на фон
         document.getElementById('modalBg').onclick = () => {
             document.getElementById('modalBg').classList.remove('active');
             document.getElementById('sheet').classList.remove('active');
