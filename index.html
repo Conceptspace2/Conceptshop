@@ -204,10 +204,11 @@
     <div class="toast glass" id="toast"><i class="fas fa-check-circle" style="color: #2af598; font-size: 18px;"></i> <span>Готово</span></div>
 
     <script>
+        // Твои новые ключи
+        const BIN_ID = "696ea19bd0ea881f4076e7ce";
+        const API_KEY = "$2a$10$L2N3z0hcYt/KjMIcI402euuF0nMvX.RMLI8RCugRIyy6/NX7K3QXy";
         const ADMIN_PASSWORD = "Inn2708inNfnaf1234";
         const MY_USERNAME = "Lacky337"; 
-        const BIN_ID = "696e703dae596e708fe71325";
-        const API_KEY = "$2a$10$KhVEyfwrswNvk7dNQEJWPezsQABoaOnmNm/jtb8vqYWBJrL8eciFm";
 
         const tg = window.Telegram.WebApp;
         tg.ready(); tg.expand();
@@ -225,13 +226,18 @@
         async function loadFromCloud() {
             try {
                 const res = await fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}/latest`, { headers: { 'X-Master-Key': API_KEY } });
-                if(!res.ok) throw new Error("Ошибка");
-                const data = await res.json();
-                products = Array.isArray(data.record) ? data.record : [];
+                if(!res.ok) {
+                     // Если база пустая (404 или ошибка формата), просто считаем, что товаров 0
+                     products = [];
+                } else {
+                    const data = await res.json();
+                    products = Array.isArray(data.record) ? data.record : [];
+                }
                 renderGrid();
                 renderAdminList();
             } catch (e) {
-                showToast("Ошибка соединения", true);
+                console.error(e);
+                showToast("Ошибка загрузки", true);
             } finally {
                 setTimeout(() => {
                     document.getElementById('loader').style.opacity = '0';
@@ -319,21 +325,16 @@
             document.getElementById('sTotal').innerText = (parseFloat(curProd.price) * curQty).toFixed(2) + ' €';
         }
 
-        // ============================================================
-        // ВОТ ТУТ ИЗМЕНЕННЫЙ ТЕКСТ СООБЩЕНИЯ
-        // ============================================================
         document.getElementById('orderBtn').onclick = () => {
             const sum = (parseFloat(curProd.price) * curQty).toFixed(2);
-            
-            // Формат: "Здравствуйте, хочу у вас купить [Товар] [Опция]..."
-            const msg = `Здравствуйте, хочу у вас купить *${curProd.name}*, *${curFlavor}*\n` +
+            // ФОРМАТ СООБЩЕНИЯ, КОТОРЫЙ ТЫ ПРОСИЛ
+            const msg = `Здравствуйте, хочу у вас купить ${curProd.name}, ${curFlavor}\n` +
                         `Количество: ${curQty}\n` +
                         `Сумма: ${sum} €`;
             
             tg.close();
             window.open(`https://t.me/${MY_USERNAME}?text=${encodeURIComponent(msg)}`, '_blank');
         };
-        // ============================================================
 
         document.getElementById('loginBtn').onclick = () => document.getElementById('authModal').style.display = 'flex';
 
@@ -443,6 +444,11 @@
             const t = document.getElementById('toast');
             t.innerHTML = isError ? `<i class="fas fa-exclamation-circle" style="color:#ff4757"></i> <span>${msg}</span>` : `<i class="fas fa-check-circle" style="color:#2af598"></i> <span>${msg}</span>`;
             t.classList.add('show');
+            if(isError) {
+                 t.style.border = "1px solid #ff4757";
+            } else {
+                 t.style.border = "none";
+            }
             tg.HapticFeedback.notificationOccurred(isError ? 'error' : 'success');
             setTimeout(() => t.classList.remove('show'), 3500);
         }
