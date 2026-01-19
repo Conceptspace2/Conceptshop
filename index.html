@@ -14,12 +14,19 @@
             --secondary-gradient: linear-gradient(135deg, #2af598 0%, #009efd 100%);
             --text-dark: #1e293b;
             --text-light: #64748b;
-            --glass-bg: rgba(255, 255, 255, 0.65);
-            --glass-border: 1px solid rgba(255, 255, 255, 0.5);
+            
+            /* СТИЛЬ МАГАЗИНА (Светлый, Эфирный) */
+            --glass-bg: rgba(255, 255, 255, 0.7);
+            --glass-border: 1px solid rgba(255, 255, 255, 0.6);
             --glass-blur: blur(20px);
-            --shadow-soft: 0 8px 32px 0 rgba(31, 38, 135, 0.15);
-            --border-radius-card: 24px;
-            --border-radius-btn: 16px;
+            --shadow-soft: 0 8px 32px 0 rgba(31, 38, 135, 0.1);
+            
+            /* СТИЛЬ АДМИНКИ (Темный, Строгий) */
+            --admin-bg: #111111;
+            --admin-card: #1e1e1e;
+            --admin-text: #ffffff;
+            --admin-input: #2a2a2a;
+            --admin-accent: #764ba2;
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
@@ -34,7 +41,7 @@
             position: relative;
         }
 
-        /* ЖИВОЙ ФОН */
+        /* --- ФОН МАГАЗИНА --- */
         .background-aura { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; overflow: hidden; }
         .aura-blob { position: absolute; filter: blur(80px); opacity: 0.4; animation: auraMove 25s infinite alternate ease-in-out; }
         .blob-1 { top: -10%; left: -10%; width: 70vw; height: 70vw; background: linear-gradient(135deg, #89f7fe, #66a6ff); }
@@ -44,6 +51,7 @@
 
         .glass { background: var(--glass-bg); backdrop-filter: var(--glass-blur); -webkit-backdrop-filter: var(--glass-blur); border: var(--glass-border); box-shadow: var(--shadow-soft); }
 
+        /* HEADER */
         header {
             position: sticky; top: 10px; z-index: 50; padding: 15px 25px; display: flex; justify-content: space-between; align-items: center;
             border-bottom-left-radius: 30px; border-bottom-right-radius: 30px; margin: 0 10px;
@@ -53,11 +61,12 @@
         .brand { font-size: 24px; font-weight: 800; letter-spacing: -0.5px; background: var(--primary-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; display: flex; align-items: center; gap: 10px; }
         .brand-icon { width: 36px; height: 36px; background: var(--primary-gradient); border-radius: 12px; display: flex; align-items: center; justify-content: center; color: white; font-size: 18px; transform: rotate(-10deg); box-shadow: 0 5px 15px rgba(118, 75, 162, 0.3); }
 
-        .admin-login-btn { width: 44px; height: 44px; border-radius: 14px; background: rgba(255,255,255,0.5); color: var(--text-light); display: flex; align-items: center; justify-content: center; font-size: 18px; transition: 0.3s; border: 1px solid rgba(255,255,255,0.7); }
+        .admin-login-btn { width: 44px; height: 44px; border-radius: 14px; background: rgba(255,255,255,0.5); color: var(--text-light); display: flex; align-items: center; justify-content: center; font-size: 18px; transition: 0.3s; border: 1px solid rgba(255,255,255,0.7); cursor: pointer; }
         .admin-login-btn:active { transform: scale(0.92); background: var(--primary-gradient); color: white; border-color: transparent;}
 
+        /* КАРТОЧКИ ТОВАРОВ */
         .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; padding: 25px 15px; }
-        .card { border-radius: var(--border-radius-card); padding: 10px; position: relative; display: flex; flex-direction: column; transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1); overflow: hidden; }
+        .card { border-radius: 24px; padding: 10px; position: relative; display: flex; flex-direction: column; transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1); overflow: hidden; cursor: pointer; }
         .card:active { transform: scale(0.96); }
 
         .img-wrap { width: 100%; padding-top: 100%; position: relative; border-radius: 20px; overflow: hidden; background: rgba(255,255,255,0.5); }
@@ -69,6 +78,7 @@
         .name { font-size: 15px; font-weight: 700; color: var(--text-dark); line-height: 1.3; }
         .price { font-size: 18px; font-weight: 800; background: var(--secondary-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
 
+        /* MODAL / SHEET */
         .modal-bg { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(30, 41, 59, 0.4); z-index: 100; opacity: 0; pointer-events: none; transition: 0.4s; backdrop-filter: blur(10px); }
         .modal-bg.active { opacity: 1; pointer-events: all; }
 
@@ -79,27 +89,72 @@
         .sheet-img { width: 80px; height: 80px; border-radius: 20px; object-fit: cover; background: #fff; box-shadow: 0 5px 15px rgba(0,0,0,0.05); }
         
         .chips { display: flex; flex-wrap: wrap; gap: 10px; margin: 20px 0 30px 0; }
-        .chip { padding: 10px 18px; background: rgba(255,255,255,0.6); border-radius: 14px; font-size: 14px; color: var(--text-light); transition: 0.3s; font-weight: 500; border: 1px solid rgba(255,255,255,0.8); }
+        .chip { padding: 10px 18px; background: rgba(255,255,255,0.6); border-radius: 14px; font-size: 14px; color: var(--text-light); transition: 0.3s; font-weight: 500; border: 1px solid rgba(255,255,255,0.8); cursor: pointer; }
         .chip.selected { background: var(--text-dark); color: #fff; border-color: transparent; box-shadow: 0 5px 15px rgba(30, 41, 59, 0.3); }
 
         .qty-ctrl { display: flex; justify-content: space-between; align-items: center; background: rgba(255,255,255,0.6); padding: 8px; border-radius: 20px; margin-bottom: 25px; border: 1px solid rgba(255,255,255,0.8); }
-        .q-btn { width: 45px; height: 45px; background: #fff; border: none; color: var(--text-dark); border-radius: 16px; font-size: 20px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); transition: 0.2s; }
+        .q-btn { width: 45px; height: 45px; background: #fff; border: none; color: var(--text-dark); border-radius: 16px; font-size: 20px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); transition: 0.2s; cursor: pointer; }
         .q-btn:active { transform: scale(0.9); }
         .q-val { font-size: 20px; font-weight: 700; width: 50px; text-align: center; }
 
-        .main-btn { width: 100%; padding: 18px 25px; border: none; border-radius: var(--border-radius-btn); background: var(--primary-gradient); color: #fff; font-size: 16px; font-weight: 700; box-shadow: 0 10px 25px -5px rgba(118, 75, 162, 0.5); display: flex; justify-content: space-between; align-items: center; transition: 0.3s; }
+        .main-btn { width: 100%; padding: 18px 25px; border: none; border-radius: 16px; background: var(--primary-gradient); color: #fff; font-size: 16px; font-weight: 700; box-shadow: 0 10px 25px -5px rgba(118, 75, 162, 0.5); display: flex; justify-content: space-between; align-items: center; transition: 0.3s; cursor: pointer; }
         .main-btn:active { transform: scale(0.97); box-shadow: 0 5px 15px -5px rgba(118, 75, 162, 0.5); }
         .btn-icon-box { width: 30px; height: 30px; background: rgba(255,255,255,0.2); border-radius: 10px; display: flex; align-items: center; justify-content: center; }
 
-        .admin-panel { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 200; padding: 25px; overflow-y: auto; display: none; }
-        .admin-panel.active { display: block; animation: fadeIn 0.3s; }
-        
-        .inp { width: 100%; padding: 16px; background: rgba(255,255,255,0.7); border: 1px solid rgba(255,255,255,0.9); color: var(--text-dark); border-radius: 16px; font-size: 15px; outline: none; margin-bottom: 15px; font-family: 'Outfit', sans-serif; transition: 0.3s; }
-        .inp:focus { background: #fff; border-color: #764ba2; box-shadow: 0 0 0 3px rgba(118, 75, 162, 0.2); }
+        /* =================================================================
+           НОВЫЙ ДИЗАЙН АДМИН ПАНЕЛИ (СТРОГИЙ, ТЕМНЫЙ, ПРОФЕССИОНАЛЬНЫЙ)
+           ================================================================= */
+        .admin-panel {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: var(--admin-bg); z-index: 200; padding: 25px; 
+            overflow-y: auto; display: none;
+            color: var(--admin-text);
+        }
+        .admin-panel.active { display: block; animation: slideIn 0.3s ease-out; }
+        @keyframes slideIn { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
 
-        .file-upload { height: 130px; border: 2px dashed #cbd5e1; border-radius: 20px; display: flex; align-items: center; justify-content: center; flex-direction: column; color: var(--text-light); position: relative; overflow: hidden; margin-bottom: 25px; background: rgba(255,255,255,0.5); transition: 0.3s; }
-        .file-upload:active { background: rgba(255,255,255,0.8); border-color: #764ba2; }
+        .admin-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; border-bottom: 1px solid #333; padding-bottom: 15px; }
+        .admin-title { font-size: 20px; font-weight: 800; color: #fff; text-transform: uppercase; letter-spacing: 1px; }
+        .close-admin { background: #222; border: 1px solid #333; color: #fff; width: 35px; height: 35px; border-radius: 8px; cursor: pointer; }
+
+        .admin-form { background: var(--admin-card); padding: 20px; border-radius: 18px; border: 1px solid #333; margin-bottom: 30px; }
         
+        .admin-inp {
+            width: 100%; padding: 14px; background: var(--admin-input); 
+            border: 1px solid #333; color: #fff; border-radius: 12px; 
+            font-size: 14px; outline: none; margin-bottom: 12px;
+            font-family: 'Outfit', sans-serif; transition: 0.2s;
+        }
+        .admin-inp:focus { border-color: var(--admin-accent); background: #333; }
+        .admin-inp::placeholder { color: #666; }
+
+        .admin-file {
+            height: 100px; border: 2px dashed #444; border-radius: 12px;
+            display: flex; align-items: center; justify-content: center;
+            flex-direction: column; color: #666; position: relative; overflow: hidden; 
+            margin-bottom: 20px; background: #222; cursor: pointer; transition: 0.2s;
+        }
+        .admin-file:hover { border-color: var(--admin-accent); color: var(--admin-accent); }
+
+        .admin-btn {
+            width: 100%; padding: 14px; background: var(--admin-accent); border: none;
+            color: white; border-radius: 12px; font-weight: 700; font-size: 14px;
+            cursor: pointer; text-transform: uppercase; letter-spacing: 0.5px;
+        }
+        .admin-btn:active { opacity: 0.8; }
+
+        .admin-list-item {
+            background: var(--admin-card); border: 1px solid #333;
+            padding: 12px; border-radius: 12px; display: flex; align-items: center; 
+            gap: 15px; margin-bottom: 10px;
+        }
+        .admin-item-img { width: 50px; height: 50px; border-radius: 8px; object-fit: cover; background: #333; }
+        .admin-item-info { flex: 1; }
+        .admin-item-name { font-size: 14px; font-weight: 700; color: #fff; margin-bottom: 4px; }
+        .admin-item-price { font-size: 13px; color: #aaa; }
+        .admin-del-btn { color: #ff4757; background: rgba(255, 71, 87, 0.1); width: 35px; height: 35px; display: flex; align-items: center; justify-content: center; border-radius: 8px; cursor: pointer; }
+
+        /* TOAST & LOADER */
         .toast { position: fixed; top: 30px; left: 50%; transform: translateX(-50%) translateY(-100px); background: #fff; color: var(--text-dark); padding: 15px 25px; border-radius: 50px; z-index: 500; transition: 0.5s cubic-bezier(0.34, 1.56, 0.64, 1); font-size: 14px; font-weight: 600; display: flex; align-items: center; gap: 10px; box-shadow: 0 15px 30px rgba(0,0,0,0.1); }
         .toast.show { transform: translateX(-50%) translateY(0); }
         
@@ -123,7 +178,7 @@
             <div class="brand-icon"><i class="fas fa-gem"></i></div>
             PARADISE
         </div>
-        <button class="admin-login-btn" id="loginBtn"><i class="fas fa-fingerprint"></i></button>
+        <div class="admin-login-btn" id="loginBtn"><i class="fas fa-fingerprint"></i></div>
     </header>
 
     <div id="loader" class="loader-box glass"><div class="aura-spinner"></div></div>
@@ -152,59 +207,52 @@
         <button class="main-btn" id="orderBtn">
             <div style="display: flex; align-items: center; gap: 10px;">
                 <div class="btn-icon-box"><i class="fas fa-shopping-bag"></i></div>
-                В корзину
+                Заказать
             </div>
             <span id="sTotal" style="font-weight: 800;">0 €</span>
         </button>
     </div>
 
-    <div class="admin-panel glass" id="adminPanel">
-        <div style="display:flex; justify-content:space-between; margin-bottom:30px; align-items:center;">
-            <h2 style="font-weight: 800; font-size: 24px; background: var(--primary-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Админ-панель</h2>
-            <button onclick="toggleAdmin(false)" style="width:40px; height:40px; background:rgba(255,255,255,0.5); border-radius:12px; border:none; color:var(--text-dark); font-size: 20px;">&times;</button>
+    <div class="admin-panel" id="adminPanel">
+        <div class="admin-header">
+            <div class="admin-title">Control Center</div>
+            <button class="close-admin" onclick="toggleAdmin(false)"><i class="fas fa-times"></i></button>
         </div>
 
-        <div style="padding:5px;">
-            <div class="file-upload" onclick="document.getElementById('fileIn').click()">
-                <i class="fas fa-cloud-upload-alt" style="font-size:32px; margin-bottom:10px; background: var(--primary-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent;"></i>
-                <span style="font-size:13px; font-weight: 500;">Нажмите для загрузки фото</span>
+        <div class="admin-form">
+            <div class="admin-file" onclick="document.getElementById('fileIn').click()">
+                <i class="fas fa-camera" style="font-size:24px; margin-bottom:10px;"></i>
+                <span style="font-size:12px;">Фото товара</span>
                 <img id="previewImg" style="display:none; position:absolute; width:100%; height:100%; object-fit:cover;">
                 <input type="file" id="fileIn" hidden accept="image/*">
             </div>
 
-            <input id="inpName" class="inp" placeholder="Название товара">
+            <input id="inpName" class="admin-inp" placeholder="Название товара">
             <div style="display: flex; gap: 10px;">
-                <input id="inpPrice" type="number" class="inp" placeholder="Цена (€)" style="flex:1;">
-                <input id="inpFlavors" class="inp" placeholder="Вкусы (через запятую)" style="flex:2;">
+                <input id="inpPrice" type="number" class="admin-inp" placeholder="Цена (€)" style="flex:1;">
+                <input id="inpFlavors" class="admin-inp" placeholder="Вкусы (через запятую)" style="flex:2;">
             </div>
-            <textarea id="inpDesc" class="inp" rows="3" placeholder="Описание"></textarea>
+            <textarea id="inpDesc" class="admin-inp" rows="3" placeholder="Описание"></textarea>
             
-            <button class="main-btn" onclick="saveProduct()" style="margin-top: 10px;">
-                <div style="display: flex; align-items: center; gap: 10px;">
-                    <div class="btn-icon-box"><i class="fas fa-save"></i></div>
-                    Сохранить
-                </div>
-            </button>
+            <button class="admin-btn" onclick="saveProduct()">Добавить в базу</button>
         </div>
 
-        <h3 style="color:var(--text-light); font-size:12px; margin: 30px 0 15px 0; letter-spacing: 1px; text-transform: uppercase; font-weight: 700;">База данных</h3>
-        <div id="adminList" style="display:flex; flex-direction:column; gap:12px; padding-bottom:50px;"></div>
+        <div style="color:#666; font-size:12px; font-weight:700; text-transform:uppercase; margin-bottom:15px; letter-spacing:1px;">Список товаров</div>
+        <div id="adminList" style="padding-bottom:50px;"></div>
     </div>
 
-    <div id="authModal" style="position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(30, 41, 59, 0.6);backdrop-filter:blur(20px);z-index:1000;display:none;align-items:center;justify-content:center;flex-direction:column;padding:30px;">
-        <div style="width:60px; height:60px; background:var(--primary-gradient); border-radius:18px; display:flex; align-items:center; justify-content:center; font-size:28px; color:white; margin-bottom: 25px; transform: rotate(-10deg); box-shadow: 0 10px 25px rgba(118, 75, 162, 0.5);"><i class="fas fa-shield-alt"></i></div>
-        <h2 style="color:white; margin-bottom:30px; font-size: 24px; font-weight: 800;">Доступ</h2>
-        <input type="password" id="passInput" class="inp" placeholder="Пароль" style="margin-bottom:20px; text-align:center; font-size: 18px; background: rgba(255,255,255,0.9); border:none;">
-        <div style="display:flex; gap:15px; width:100%;">
-            <button class="main-btn" style="background:rgba(255,255,255,0.2); color:white; box-shadow:none; backdrop-filter:blur(10px);" onclick="document.getElementById('authModal').style.display='none'">Отмена</button>
-            <button class="main-btn" onclick="checkPass()">Войти</button>
+    <div id="authModal" style="position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.85);backdrop-filter:blur(5px);z-index:1000;display:none;align-items:center;justify-content:center;flex-direction:column;padding:30px;">
+        <h2 style="color:white; margin-bottom:30px; font-size: 24px; font-weight: 800;">Вход админа</h2>
+        <input type="password" id="passInput" class="admin-inp" placeholder="Пароль" style="margin-bottom:20px; text-align:center; font-size: 18px; max-width:200px;">
+        <div style="display:flex; gap:15px; width:100%; justify-content:center;">
+            <button class="admin-btn" style="background:#333; width:auto; padding:10px 20px;" onclick="document.getElementById('authModal').style.display='none'">Назад</button>
+            <button class="admin-btn" style="width:auto; padding:10px 20px;" onclick="checkPass()">Войти</button>
         </div>
     </div>
 
     <div class="toast glass" id="toast"><i class="fas fa-check-circle" style="color: #2af598; font-size: 18px;"></i> <span>Готово</span></div>
 
     <script>
-        // Твои новые ключи
         const BIN_ID = "696ea19bd0ea881f4076e7ce";
         const API_KEY = "$2a$10$L2N3z0hcYt/KjMIcI402euuF0nMvX.RMLI8RCugRIyy6/NX7K3QXy";
         const ADMIN_PASSWORD = "Inn2708inNfnaf1234";
@@ -227,7 +275,6 @@
             try {
                 const res = await fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}/latest`, { headers: { 'X-Master-Key': API_KEY } });
                 if(!res.ok) {
-                     // Если база пустая (404 или ошибка формата), просто считаем, что товаров 0
                      products = [];
                 } else {
                     const data = await res.json();
@@ -325,15 +372,26 @@
             document.getElementById('sTotal').innerText = (parseFloat(curProd.price) * curQty).toFixed(2) + ' €';
         }
 
+        // ==========================================
+        // ИСПРАВЛЕННАЯ ФУНКЦИЯ ЗАКАЗА (ОТКРЫТИЕ ССЫЛКИ)
+        // ==========================================
         document.getElementById('orderBtn').onclick = () => {
             const sum = (parseFloat(curProd.price) * curQty).toFixed(2);
-            // ФОРМАТ СООБЩЕНИЯ, КОТОРЫЙ ТЫ ПРОСИЛ
+            
             const msg = `Здравствуйте, хочу у вас купить ${curProd.name}, ${curFlavor}\n` +
                         `Количество: ${curQty}\n` +
                         `Сумма: ${sum} €`;
+
+            const url = `https://t.me/${MY_USERNAME}?text=${encodeURIComponent(msg)}`;
             
-            tg.close();
-            window.open(`https://t.me/${MY_USERNAME}?text=${encodeURIComponent(msg)}`, '_blank');
+            // Пытаемся открыть через метод Telegram WebApp (самый надежный)
+            try {
+                tg.openTelegramLink(url);
+            } catch (e) {
+                // Если старая версия - через window.open
+                window.open(url, '_blank');
+            }
+            // Убрали tg.close(), чтобы ссылка точно открылась
         };
 
         document.getElementById('loginBtn').onclick = () => document.getElementById('authModal').style.display = 'flex';
@@ -410,15 +468,17 @@
             lst.innerHTML = '';
             products.forEach(p => {
                 const row = document.createElement('div');
-                row.style.cssText = "background:rgba(255,255,255,0.6); border: 1px solid rgba(255,255,255,0.8); padding:10px; border-radius:16px; display:flex; align-items:center; gap:15px;";
-                let img = p.image ? `<img src="${p.image}" style="width:50px;height:50px;border-radius:12px;object-fit:cover;">` : `<div style="width:50px;height:50px;background:#e2e8f0;border-radius:12px;"></div>`;
+                row.className = 'admin-list-item';
+                
+                let img = p.image ? `<img src="${p.image}" class="admin-item-img">` : `<div class="admin-item-img"></div>`;
+                
                 row.innerHTML = `
                     ${img}
-                    <div style="flex:1;">
-                        <div style="font-weight:700; font-size:15px; color:var(--text-dark);">${p.name}</div>
-                        <div style="font-weight:700; font-size:14px; background: var(--secondary-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">${p.price} €</div>
+                    <div class="admin-item-info">
+                        <div class="admin-item-name">${p.name}</div>
+                        <div class="admin-item-price">${p.price} €</div>
                     </div>
-                    <i class="far fa-trash-alt" style="padding:12px; color:#ff4757; cursor:pointer; opacity:0.8; transition:0.2s;" onclick="delProd(${p.id})" onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=0.8"></i>
+                    <div class="admin-del-btn" onclick="delProd(${p.id})"><i class="fas fa-trash"></i></div>
                 `;
                 lst.appendChild(row);
             });
@@ -435,7 +495,7 @@
 
         function clearForm() {
             editId = null;
-            document.querySelectorAll('.inp').forEach(i => i.value = '');
+            document.querySelectorAll('.admin-inp').forEach(i => i.value = '');
             document.getElementById('previewImg').src = '';
             document.getElementById('previewImg').style.display = 'none';
         }
