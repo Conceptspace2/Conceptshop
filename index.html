@@ -27,6 +27,7 @@
             --accent-purple: #9d00ff;      /* Secondary */
             --accent-red: #ff2a6d;         /* Errors / Hot */
             --accent-blue: #00ccff;        /* Info / Links */
+            --accent-gold: #ffd700;        /* VIP / Admin Status */
 
             /* UI PROPS */
             --glass: rgba(255, 255, 255, 0.05);
@@ -201,7 +202,7 @@
         }
 
         /* =================================================================
-           5. PROFILE & LINKS STYLES (NEW)
+           5. PROFILE & LINKS STYLES
            ================================================================= */
         .profile-header {
             background: linear-gradient(180deg, rgba(255,255,255,0.03), transparent);
@@ -350,8 +351,8 @@
         .admin-panel.open { transform: translateX(0); }
         
         .adm-nav { padding: 20px; border-bottom: 1px solid #222; display: flex; justify-content: space-between; align-items: center; background: #080808; }
-        .adm-tabs { display: flex; background: #080808; border-bottom: 1px solid #222; }
-        .adm-tab { flex: 1; padding: 16px; text-align: center; font-size: 11px; font-weight: 800; color: #555; letter-spacing: 1px; }
+        .adm-tabs { display: flex; background: #080808; border-bottom: 1px solid #222; overflow-x: auto; }
+        .adm-tab { flex: 1; padding: 16px; text-align: center; font-size: 11px; font-weight: 800; color: #555; letter-spacing: 1px; min-width: 80px; white-space: nowrap; }
         .adm-tab.active { color: var(--accent-green); border-bottom: 2px solid var(--accent-green); background: rgba(0,255,157,0.05); }
 
         .adm-content { flex: 1; overflow-y: auto; padding: 20px; }
@@ -391,7 +392,7 @@
     <div id="app-loader">
         <div class="loader-orbit"></div>
         <div class="loader-text">INFINITY ULTRA</div>
-        <div style="margin-top:8px; font-size:11px; color:#444; letter-spacing:2px;">CONCEPT SPACE</div>
+        <div style="margin-top:8px; font-size:11px; color:#444; letter-spacing:2px;">LOADING SPACE...</div>
     </div>
 
     <header class="header">
@@ -451,7 +452,7 @@
                 </div>
                 <div class="menu-item" onclick="openAdminHint()">
                     <div class="menu-left"><i class="fas fa-shield-alt"></i> Статус</div>
-                    <div style="font-size:10px; color:var(--accent-green); font-weight:800;">CLIENT</div>
+                    <div id="status-text" style="font-size:10px; color:var(--accent-green); font-weight:800;">CLIENT</div>
                 </div>
                 <div class="menu-item" onclick="clearCache()">
                     <div class="menu-left"><i class="fas fa-broom"></i> Очистить кэш</div>
@@ -460,7 +461,7 @@
             </div>
 
             <div style="text-align:center; margin-top:30px; color:#333; font-size:10px; font-weight:800; letter-spacing:2px;">
-                CONCEPT SPACE v2.0 ULTRA
+                CONCEPT SPACE v3.0 ULTRA
             </div>
         </div>
 
@@ -531,7 +532,7 @@
         </div>
     </div>
 
-    <div class="admin-float-btn" onclick="openAuth()"><i class="fas fa-fingerprint"></i></div>
+    <div class="admin-float-btn" id="admin-float-btn" onclick="openAuth()" style="display:none;"><i class="fas fa-fingerprint"></i></div>
 
     <div class="admin-panel" id="admin-panel">
         <div class="adm-nav">
@@ -544,6 +545,7 @@
             <div class="adm-tab active" onclick="setTab('prod')">ТОВАРЫ</div>
             <div class="adm-tab" onclick="setTab('promo')">ПРОМО</div>
             <div class="adm-tab" onclick="setTab('cats')">КАТЕГОРИИ</div>
+            <div class="adm-tab" onclick="setTab('users')" style="color:var(--accent-gold)">ПОЛЬЗОВАТЕЛИ</div>
         </div>
 
         <div class="adm-content" id="adm-content">
@@ -564,7 +566,7 @@
                     <input id="nf-img" class="adm-input" placeholder="Ссылка на фото..." onchange="updPreview(this.value, 'prev-prod')">
                     
                     <label class="adm-file-label">
-                        <i class="fas fa-camera"></i> Загрузить фото (Max 200KB)
+                        <i class="fas fa-camera"></i> Загрузить фото (Max 150KB)
                         <input type="file" accept="image/*" style="display:none" onchange="handleUpload(this, 'nf-img', 'prev-prod')">
                     </label>
                     <img id="prev-prod" style="width:100%; height:150px; object-fit:cover; border-radius:12px; margin-bottom:15px; display:none; border:1px solid #333;">
@@ -610,6 +612,21 @@
                 <div id="adm-cat-list"></div>
             </div>
 
+            <div id="tab-users" style="display:none;">
+                <div class="adm-card" style="border-color: var(--accent-gold);">
+                    <div style="font-weight:bold; margin-bottom:15px; color:var(--accent-gold);">Управление ролями</div>
+                    <input id="uf-id" class="adm-input" placeholder="Telegram ID (цифры)">
+                    <select id="uf-role" class="adm-input">
+                        <option value="admin">ADMIN (Полный доступ)</option>
+                        <option value="manager">MANAGER (Товары/Баннеры)</option>
+                        <option value="vip">VIP (Только статус)</option>
+                    </select>
+                    <button class="btn-main" onclick="saveUserRole()" style="height:45px; background:var(--accent-gold); color:#000;">ВЫДАТЬ ПРАВА</button>
+                </div>
+                <div style="font-size:10px; font-weight:bold; color:#666; margin-bottom:10px; padding-left:5px;">СПИСОК ПОЛЬЗОВАТЕЛЕЙ</div>
+                <div id="adm-users-list"></div>
+            </div>
+
         </div>
     </div>
 
@@ -630,9 +647,10 @@
         // CONFIG & STATE
         // =================================================================
         const CFG = {
+            // ВАШИ КЛЮЧИ ИНТЕГРИРОВАНЫ
             BIN_ID: "696e703dae596e708fe71325",
             API_KEY: "$2a$10$KhVEyfwrswNvk7dNQEJWPezsQABoaOnmNm/jtb8vqYWBJrL8eciFm",
-            ADMIN_PIN: "Inn2708inNfnaf1234",
+            ADMIN_PIN: "2708", // Резервный пин-код
             TG_OWNER: "Lacky337"
         };
 
@@ -646,11 +664,12 @@
             ],
             banners: [
                 {id: 1, title: 'WELCOME TO SPACE', badge: 'NEW', color: '#00ff9d', img: 'https://images.unsplash.com/photo-1579546929518-9e396f3cc809?auto=format&fit=crop&w=1000&q=80'}
-            ]
+            ],
+            users: {} // Формат: { "12345678": "admin", "87654321": "manager" }
         };
 
         let USER = { cart: [], favs: [] };
-        let UI = { activeCat: 'all', curProd: null, editId: null };
+        let UI = { activeCat: 'all', curProd: null, editId: null, role: 'client' };
         const tg = window.Telegram.WebApp;
 
         // =================================================================
@@ -666,15 +685,15 @@
             initStars();
             
             // Load Local User Data
-            const local = localStorage.getItem('cs_user_v2');
+            const local = localStorage.getItem('cs_user_v3');
             if(local) USER = JSON.parse(local);
             
-            // --- TELEGRAM USER DATA SYNC ---
-            initProfile();
-
             // Sync with Cloud
             await cloudLoad();
             
+            // Init Profile & Check Roles
+            initProfile();
+
             // Render UI
             renderAll();
             
@@ -707,11 +726,30 @@
                     img.style.display = 'block';
                     document.getElementById('profile-icon-default').style.display = 'none';
                 }
+
+                // CHECK ROLE FROM CLOUD
+                if(STATE.users && STATE.users[u.id]) {
+                    UI.role = STATE.users[u.id];
+                }
+            } else {
+                 // For testing in browser without Telegram
+                 // UI.role = 'admin'; 
+            }
+
+            // Apply Role to UI
+            const st = document.getElementById('status-text');
+            st.innerText = UI.role.toUpperCase();
+            
+            if(UI.role === 'admin' || UI.role === 'manager') {
+                document.getElementById('admin-float-btn').style.display = 'flex';
+                st.style.color = 'var(--accent-gold)';
+            } else if (UI.role === 'vip') {
+                st.style.color = 'var(--accent-purple)';
             }
         }
 
         // =================================================================
-        // CLOUD SYNC ENGINE
+        // CLOUD SYNC ENGINE (UPDATED FOR STABILITY)
         // =================================================================
         async function cloudLoad() {
             try {
@@ -721,9 +759,11 @@
                 if(res.ok) {
                     const json = await res.json();
                     const data = json.record;
+                    // Merge Data safely
                     if(data.products) STATE.products = data.products;
                     if(data.categories) STATE.categories = data.categories;
-                    if(data.banners && data.banners.length) STATE.banners = data.banners;
+                    if(data.banners) STATE.banners = data.banners;
+                    if(data.users) STATE.users = data.users || {};
                 }
             } catch(e) { console.error("Offline"); showToast("Работает оффлайн режим", true); }
         }
@@ -731,13 +771,27 @@
         async function cloudSave() {
             showToast("Синхронизация...");
             try {
+                // 1. Сначала получаем актуальную версию, чтобы не затереть чужие данные
+                const resCheck = await fetch(`https://api.jsonbin.io/v3/b/${CFG.BIN_ID}/latest`, {
+                    headers: { 'X-Master-Key': CFG.API_KEY }
+                });
+                const jsonCheck = await resCheck.json();
+                let serverData = jsonCheck.record;
+
+                // 2. Обновляем поля нашими данными
+                serverData.products = STATE.products;
+                serverData.categories = STATE.categories;
+                serverData.banners = STATE.banners;
+                serverData.users = STATE.users;
+
+                // 3. Отправляем обратно
                 await fetch(`https://api.jsonbin.io/v3/b/${CFG.BIN_ID}`, {
                     method: 'PUT',
                     headers: { 'Content-Type': 'application/json', 'X-Master-Key': CFG.API_KEY },
-                    body: JSON.stringify(STATE)
+                    body: JSON.stringify(serverData)
                 });
                 showToast("Успешно сохранено!");
-            } catch(e) { showToast("Ошибка сохранения", true); }
+            } catch(e) { showToast("Ошибка сохранения", true); console.error(e); }
         }
 
         // =================================================================
@@ -970,7 +1024,7 @@
             let m = "🚀 *NEW ORDER | CONCEPT SPACE*\n\n";
             USER.cart.forEach(x => m += `▪️ ${x.name} (${x.opt}) x${x.q} = ${x.price*x.q}€\n`);
             m += `\n💰 *TOTAL: ${document.getElementById('cart-total').innerText}*`;
-            m += `\n👤 User: @${tg.initDataUnsafe?.user?.username || 'Guest'}`;
+            m += `\n👤 User: @${tg.initDataUnsafe?.user?.username || 'Guest'} (ID: ${tg.initDataUnsafe?.user?.id || '?'})`;
             window.open(`https://t.me/${CFG.TG_OWNER}?text=${encodeURIComponent(m)}`);
             tg.close();
         }
@@ -983,17 +1037,34 @@
         function openAdminHint() { showToast("Доступ запрещен", true); }
 
         function checkAuth() {
+            // Если роль уже admin/manager - пускаем сразу
+            if(UI.role === 'admin' || UI.role === 'manager') {
+                grantAdminAccess();
+                return;
+            }
+            // Иначе проверяем ПИН
             if(document.getElementById('auth-pin').value === CFG.ADMIN_PIN) {
-                closeAuth();
-                toggleAdmin(true);
-                renderAdmList();
-                renderAdmPromo();
-                renderAdmCats();
+                grantAdminAccess();
             } else {
                 showToast("Неверный PIN", true);
                 tg.HapticFeedback.notificationOccurred('error');
             }
         }
+        
+        function grantAdminAccess() {
+            closeAuth();
+            toggleAdmin(true);
+            renderAdmList();
+            renderAdmPromo();
+            renderAdmCats();
+            renderAdmUsers();
+            
+            // Скрыть управление пользователями, если это Менеджер (не Админ)
+            if(UI.role === 'manager') {
+                document.querySelector('[onclick="setTab(\'users\')"]').style.display = 'none';
+            }
+        }
+
         function toggleAdmin(o) {
             const p = document.getElementById('admin-panel');
             o ? p.classList.add('open') : p.classList.remove('open');
@@ -1002,7 +1073,7 @@
         function setTab(t) {
             document.querySelectorAll('.adm-tab').forEach(x=>x.classList.remove('active'));
             event.target.classList.add('active');
-            ['prod','promo','cats'].forEach(id => document.getElementById('tab-'+id).style.display='none');
+            ['prod','promo','cats','users'].forEach(id => document.getElementById('tab-'+id).style.display='none');
             document.getElementById('tab-'+t).style.display='block';
         }
 
@@ -1127,13 +1198,50 @@
             }
         }
 
+        // --- ADMIN: USERS (ROLES) ---
+        function renderAdmUsers() {
+            const l = document.getElementById('adm-users-list');
+            l.innerHTML = '';
+            const users = STATE.users || {};
+            for(const [id, role] of Object.entries(users)) {
+                l.innerHTML += `
+                <div style="background:#1a1a1a; padding:12px; border-radius:10px; margin-bottom:6px; display:flex; justify-content:space-between; align-items:center; border:1px solid #333;">
+                    <div>
+                        <div style="font-size:12px; font-weight:bold;">ID: ${id}</div>
+                        <div style="font-size:10px; color:${role==='admin'?'var(--accent-green)':'var(--accent-purple)'}">${role.toUpperCase()}</div>
+                    </div>
+                    <i class="fas fa-trash" style="color:var(--accent-red); cursor:pointer;" onclick="removeRole('${id}')"></i>
+                </div>`;
+            }
+        }
+        async function saveUserRole() {
+            const id = document.getElementById('uf-id').value;
+            const role = document.getElementById('uf-role').value;
+            if(!id) return showToast("Нужен ID", true);
+            
+            if(!STATE.users) STATE.users = {};
+            STATE.users[id] = role;
+            
+            await cloudSave();
+            renderAdmUsers();
+            document.getElementById('uf-id').value = '';
+            showToast("Права выданы");
+        }
+        async function removeRole(id) {
+            if(confirm("Снять права?")) {
+                delete STATE.users[id];
+                await cloudSave();
+                renderAdmUsers();
+            }
+        }
+
         // =================================================================
         // HELPERS
         // =================================================================
         function handleUpload(input, targetId, prevId) {
             const f = input.files[0];
             if(!f) return;
-            if(f.size > 200000) return alert("Файл слишком большой! Используй ссылку.");
+            if(f.size > 150000) return alert("Файл слишком большой (Max 150KB)! Используй ссылку.");
             const reader = new FileReader();
             reader.onload = (e) => {
                 document.getElementById(targetId).value = e.target.result;
@@ -1168,7 +1276,7 @@
         }
 
         function saveUser() {
-            localStorage.setItem('cs_user_v2', JSON.stringify(USER));
+            localStorage.setItem('cs_user_v3', JSON.stringify(USER));
             updateCartBadge();
         }
         function updateCartBadge() {
@@ -1178,7 +1286,7 @@
             c > 0 ? el.classList.add('visible') : el.classList.remove('visible');
         }
         function clearCache() {
-            localStorage.removeItem('cs_user_v2');
+            localStorage.removeItem('cs_user_v3');
             location.reload();
         }
 
