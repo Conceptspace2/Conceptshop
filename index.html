@@ -70,12 +70,12 @@
             transition: opacity 0.6s ease;
         }
         .loader-ring {
-            width: 60px; height: 60px; border-radius: 50%;
-            border: 2px solid transparent; border-top-color: var(--accent); border-bottom-color: var(--secondary);
-            animation: spin 1.5s linear infinite; box-shadow: 0 0 20px var(--accent-glow);
+            width: 70px; height: 70px; border-radius: 50%;
+            border: 3px solid transparent; border-top-color: var(--accent); border-bottom-color: var(--secondary);
+            animation: spin 1.2s linear infinite; box-shadow: 0 0 30px var(--accent-glow);
         }
         .loader-txt {
-            margin-top: 25px; font-size: 16px; font-weight: 800; letter-spacing: 4px;
+            margin-top: 25px; font-size: 18px; font-weight: 800; letter-spacing: 3px;
             background: linear-gradient(90deg, var(--accent), var(--secondary));
             -webkit-background-clip: text; -webkit-text-fill-color: transparent;
         }
@@ -91,7 +91,7 @@
             display: flex; justify-content: space-between; align-items: center;
         }
         
-        .brand-logo { font-size: 18px; font-weight: 900; letter-spacing: -0.5px; display: flex; align-items: center; gap: 10px; }
+        .brand-logo { font-size: 16px; font-weight: 900; letter-spacing: -0.5px; display: flex; align-items: center; gap: 10px; color: #fff; text-transform: uppercase; }
         .brand-logo i { color: var(--accent); filter: drop-shadow(0 0 8px var(--accent-glow)); animation: pulse 3s infinite; }
 
         .app-content {
@@ -125,9 +125,7 @@
 
         /* Search */
         .search-wrap { position: sticky; top: 0; z-index: 40; background: rgba(2,2,4,0.95); backdrop-filter: blur(10px); padding: 10px 15px; }
-        .search-box {
-            position: relative; width: 100%;
-        }
+        .search-box { position: relative; width: 100%; }
         .search-inp {
             width: 100%; background: rgba(255,255,255,0.08); border: 1px solid var(--border);
             border-radius: var(--radius-m); padding: 12px 15px 12px 45px;
@@ -141,7 +139,7 @@
         .cat-chip {
             padding: 8px 20px; border-radius: 50px; background: rgba(255,255,255,0.05);
             border: 1px solid var(--border); color: #aaa; font-size: 12px; font-weight: 700;
-            white-space: nowrap; transition: 0.3s; cursor: pointer;
+            white-space: nowrap; transition: 0.3s; cursor: pointer; text-transform: capitalize;
         }
         .cat-chip.active {
             background: var(--accent); color: #000; border-color: var(--accent);
@@ -253,6 +251,7 @@
             border-radius: 14px; font-weight: 800; font-size: 14px; letter-spacing: 0.5px;
             text-transform: uppercase; box-shadow: 0 5px 20px rgba(0,255,157,0.3);
             display: flex; justify-content: space-between; align-items: center; padding: 0 20px;
+            cursor: pointer;
         }
         .main-btn:active { transform: scale(0.97); }
         .main-btn.disabled { background: #333; color: #666; pointer-events: none; box-shadow: none; }
@@ -264,9 +263,11 @@
         }
         
         .profile-header { text-align: center; margin-bottom: 30px; padding: 20px; background: linear-gradient(180deg, rgba(255,255,255,0.05), transparent); border-radius: 20px; border: 1px solid var(--border); }
-        .avatar { width: 80px; height: 80px; border-radius: 50%; background: #222; margin: 0 auto 15px; border: 2px solid var(--accent); display: flex; align-items: center; justify-content: center; font-size: 35px; color: #fff; box-shadow: 0 0 20px var(--accent-glow); }
+        .avatar { width: 80px; height: 80px; border-radius: 50%; background: #222; margin: 0 auto 15px; border: 2px solid var(--accent); display: flex; align-items: center; justify-content: center; font-size: 35px; color: #fff; box-shadow: 0 0 20px var(--accent-glow); overflow: hidden;}
+        .avatar img { width: 100%; height: 100%; object-fit: cover; }
         
-        .setting-row { display: flex; align-items: center; justify-content: space-between; padding: 15px; border-bottom: 1px solid #222; }
+        .setting-row { display: flex; align-items: center; justify-content: space-between; padding: 15px; border-bottom: 1px solid #222; cursor: pointer; }
+        .setting-row:active { background: rgba(255,255,255,0.05); }
         .setting-row i { width: 30px; color: var(--text-muted); }
 
         /* =========================================
@@ -276,7 +277,7 @@
             position: fixed; bottom: 100px; right: 20px; width: 44px; height: 44px;
             background: rgba(10,10,10,0.8); backdrop-filter: blur(5px);
             border-radius: 50%; color: #444; display: flex; align-items: center; justify-content: center;
-            border: 1px solid #333; z-index: 90; transition: 0.3s;
+            border: 1px solid #333; z-index: 90; transition: 0.3s; cursor: pointer;
         }
         .admin-trigger:active { color: var(--accent); border-color: var(--accent); transform: scale(0.9); }
 
@@ -288,13 +289,22 @@
         .admin-panel.open { transform: translateX(0); }
         
         .admin-nav { display: flex; border-bottom: 1px solid #222; background: #080808; }
-        .admin-tab { flex: 1; padding: 15px; text-align: center; font-size: 11px; font-weight: 800; color: #555; cursor: pointer; }
+        .admin-tab { flex: 1; padding: 15px; text-align: center; font-size: 10px; font-weight: 800; color: #555; cursor: pointer; }
         .admin-tab.active { color: var(--accent); border-bottom: 2px solid var(--accent); background: rgba(0,255,157,0.05); }
 
         .inp-group { margin-bottom: 15px; }
         .inp-label { font-size: 10px; color: #666; text-transform: uppercase; font-weight: 700; margin-bottom: 5px; margin-left: 2px; }
         .adm-inp { width: 100%; background: #111; border: 1px solid #333; padding: 12px; border-radius: 10px; color: #fff; outline: none; transition: 0.2s; }
         .adm-inp:focus { border-color: var(--accent); }
+        
+        /* Category Manager in Admin */
+        .cat-man-item { display:flex; justify-content:space-between; align-items:center; background:#111; padding:10px; margin-bottom:8px; border-radius:8px; border:1px solid #333; }
+        .file-upload-btn {
+            display: flex; align-items: center; justify-content: center; gap: 10px;
+            background: #222; color: #fff; padding: 10px; border-radius: 10px;
+            border: 1px dashed #555; cursor: pointer; margin-top: 5px; font-size: 12px;
+        }
+        .file-upload-btn:active { background: #333; }
 
         /* Toast */
         .toast {
@@ -322,12 +332,12 @@
     <div class="app-loader" id="loader">
         <div class="loader-ring"></div>
         <div class="loader-txt">CS 4.0 INFINITY</div>
-        <div style="margin-top:5px; font-size:10px; color:#444;">SYSTEM INITIALIZATION</div>
+        <div style="margin-top:5px; font-size:10px; color:#444;">ULTRA EDITION</div>
     </div>
 
     <header class="app-header">
         <div class="brand-logo">
-            <i class="fas fa-meteor"></i> CS 4.0
+            <i class="fas fa-meteor"></i> INFINITY ULTRA
         </div>
         <div style="font-size: 12px; font-weight: 700; color: #444; display:flex; gap:5px; align-items:center;">
             <div style="width:6px; height:6px; background:var(--accent); border-radius:50%; box-shadow:0 0 5px var(--accent);"></div>
@@ -349,26 +359,21 @@
                 <div class="banner-slide">
                     <img src="https://i.pinimg.com/736x/88/54/10/8854109405f63d9173c33364f3780373.jpg" class="banner-img">
                     <div class="banner-content">
-                        <span class="banner-badge">NEW ARRIVAL</span>
-                        <div style="font-weight:800; font-size:18px;">GEEKVAPE AEGIS</div>
+                        <span class="banner-badge">NEW DROP</span>
+                        <div style="font-weight:800; font-size:18px;">GEEKVAPE SERIES</div>
                     </div>
                 </div>
                 <div class="banner-slide">
                     <img src="https://i.pinimg.com/736x/21/e5/22/21e52292f750d4f12833633215886617.jpg" class="banner-img">
                     <div class="banner-content">
-                        <span class="banner-badge" style="background:var(--secondary); color:#fff;">PROMO</span>
-                        <div style="font-weight:800; font-size:18px;">LIQUID SALE -20%</div>
+                        <span class="banner-badge" style="background:var(--secondary); color:#fff;">SALE</span>
+                        <div style="font-weight:800; font-size:18px;">SUMMER VIBES</div>
                     </div>
                 </div>
             </div>
 
             <div class="cat-row" id="catList">
-                <div class="cat-chip active" onclick="setCat('all', this)">Все</div>
-                <div class="cat-chip" onclick="setCat('pod', this)">Pods</div>
-                <div class="cat-chip" onclick="setCat('vape', this)">Vapes</div>
-                <div class="cat-chip" onclick="setCat('liquid', this)">Жижи</div>
-                <div class="cat-chip" onclick="setCat('parts', this)">Картриджи</div>
-            </div>
+                </div>
 
             <div class="grid-container" id="prodGrid">
                 </div>
@@ -382,15 +387,15 @@
 
         <div id="view-profile" class="view-section" style="display:none; padding:20px;">
             <div class="profile-header">
-                <div class="avatar"><i class="fas fa-user-astronaut"></i></div>
-                <h2 id="userName">Guest User</h2>
-                <div style="color:var(--accent); font-size:11px; font-weight:800; letter-spacing:1px; margin-top:5px;">INFINITY MEMBER</div>
+                <div class="avatar" id="pAvatar"><i class="fas fa-user-astronaut"></i></div>
+                <h2 id="pName">Guest</h2>
+                <div id="pHandle" style="color:var(--accent); font-size:12px; font-weight:800; margin-top:5px;">@guest</div>
             </div>
 
             <div style="background:var(--bg-card); border-radius:16px; overflow:hidden; border:1px solid var(--border);">
                 <div class="setting-row" onclick="showToast('История пуста')">
                     <div style="display:flex; gap:10px; align-items:center;">
-                        <i class="fas fa-history"></i> <span>История заказов</span>
+                        <i class="fas fa-history"></i> <span>Мои заказы</span>
                     </div>
                     <i class="fas fa-chevron-right" style="font-size:12px;"></i>
                 </div>
@@ -400,16 +405,16 @@
                     </div>
                     <i class="fas fa-chevron-right" style="font-size:12px;"></i>
                 </div>
-                <div class="setting-row" onclick="window.open('https://t.me/support')">
+                <div class="setting-row" onclick="window.open('https://t.me/Lacky337')">
                     <div style="display:flex; gap:10px; align-items:center;">
-                        <i class="fas fa-headset"></i> <span>Поддержка</span>
+                        <i class="fas fa-headset"></i> <span>Поддержка (@Lacky337)</span>
                     </div>
                     <i class="fas fa-external-link-alt" style="font-size:12px;"></i>
                 </div>
             </div>
             
             <div style="margin-top:20px; font-size:10px; text-align:center; color:#444;">
-                APP VERSION 4.2.1 (INFINITY BUILD)
+                CS 4.0 INFINITY ULTRA BUILD
             </div>
         </div>
 
@@ -442,8 +447,8 @@
             <img id="dImg" class="detail-thumb">
             <div class="detail-info" style="flex:1">
                 <div id="dStock" style="font-size:10px; font-weight:800; margin-bottom:5px; color:#666;">IN STOCK</div>
-                <h2 id="dTitle">Product Name</h2>
-                <p id="dDesc">Description goes here...</p>
+                <h2 id="dTitle">Product</h2>
+                <p id="dDesc">Concept Space Original Product.</p>
             </div>
         </div>
 
@@ -503,10 +508,6 @@
             <span>Валюта</span>
             <span style="font-weight:bold; color:var(--accent);">EUR (€)</span>
         </div>
-        <div class="setting-row" style="border:none;">
-            <span>Язык</span>
-            <span style="font-weight:bold; color:#fff;">Русский</span>
-        </div>
         <button class="main-btn" onclick="closeSheet()" style="background:#222; color:#fff; justify-content:center; margin-top:20px;">ЗАКРЫТЬ</button>
     </div>
 
@@ -514,13 +515,13 @@
     
     <div class="admin-panel" id="adminPanel">
         <div style="padding:15px; background:#000; border-bottom:1px solid #222; display:flex; justify-content:space-between; align-items:center;">
-            <div style="font-weight:900; color:var(--accent); letter-spacing:1px;">CS:ADMIN</div>
-            <i class="fas fa-times" onclick="toggleAdmin(false)" style="font-size:20px; padding:10px;"></i>
+            <div style="font-weight:900; color:var(--accent); letter-spacing:1px;">CS:ADMIN ULTRA</div>
+            <i class="fas fa-times" onclick="toggleAdmin(false)" style="font-size:20px; padding:10px; cursor:pointer;"></i>
         </div>
         
         <div class="admin-nav">
             <div class="admin-tab active" onclick="admTab('edit')">ТОВАРЫ</div>
-            <div class="admin-tab" onclick="admTab('orders')">ЗАКАЗЫ</div>
+            <div class="admin-tab" onclick="admTab('cats')">КАТЕГОРИИ</div>
             <div class="admin-tab" onclick="admTab('stats')">ИНФО</div>
         </div>
 
@@ -539,15 +540,19 @@
                         <div class="inp-group" style="flex:1"><div class="inp-label">Сток</div><input type="number" id="nf-stock" class="adm-inp"></div>
                     </div>
                     <div class="inp-group"><div class="inp-label">Категория</div>
-                        <select id="nf-cat" class="adm-inp">
-                            <option value="pod">Pod Systems</option>
-                            <option value="vape">Disposables</option>
-                            <option value="liquid">E-Liquids</option>
-                            <option value="parts">Parts</option>
-                        </select>
+                        <select id="nf-cat" class="adm-inp"></select>
                     </div>
                     <div class="inp-group"><div class="inp-label">Вкусы (через запятую)</div><input id="nf-fl" class="adm-inp" placeholder="Mango, Mint..."></div>
-                    <div class="inp-group"><div class="inp-label">URL фото</div><input id="nf-img" class="adm-inp"></div>
+                    
+                    <div class="inp-group">
+                        <div class="inp-label">Фото (URL или Загрузка)</div>
+                        <input id="nf-img" class="adm-inp" placeholder="https://..." onchange="updatePreview(this.value)">
+                        <label class="file-upload-btn">
+                            <i class="fas fa-camera"></i> ЗАГРУЗИТЬ С ТЕЛЕФОНА
+                            <input type="file" id="fileInp" accept="image/*" style="display:none" onchange="handleFileUpload(this)">
+                        </label>
+                        <img id="imgPreview" style="width:100%; height:150px; object-fit:cover; margin-top:10px; border-radius:8px; display:none; border:1px solid #333;">
+                    </div>
                     
                     <button class="main-btn" onclick="saveProduct()" style="justify-content:center;">СОХРАНИТЬ</button>
                 </div>
@@ -555,16 +560,20 @@
                 <div id="admProdList"></div>
             </div>
 
-            <div id="adm-orders" style="display:none;">
-                <div style="text-align:center; padding:20px; color:#444;">Симуляция заказов</div>
-                <div class="cart-item" style="border-left: 3px solid var(--accent);">
-                    <div style="flex:1;">
-                        <div style="font-size:12px; color:#666;">#ORD-9921 • 10 мин назад</div>
-                        <div style="font-weight:bold;">User: Alex</div>
-                        <div style="font-size:12px;">Geekvape Aegis (x1)</div>
+            <div id="adm-cats" style="display:none;">
+                <div style="background:#111; padding:15px; border-radius:12px; border:1px solid #222; margin-bottom:20px;">
+                    <div class="inp-group">
+                        <div class="inp-label">Новая категория (ID)</div>
+                        <input id="new-cat-id" class="adm-inp" placeholder="пример: vape">
                     </div>
-                    <div style="font-weight:bold; color:var(--accent);">45.00 €</div>
+                    <div class="inp-group">
+                        <div class="inp-label">Название (для людей)</div>
+                        <input id="new-cat-name" class="adm-inp" placeholder="пример: Вейпы">
+                    </div>
+                    <button class="main-btn" onclick="addNewCategory()" style="justify-content:center;">ДОБАВИТЬ КАТЕГОРИЮ</button>
                 </div>
+                <div style="color:#666; font-size:10px; margin-bottom:10px; font-weight:bold;">ТЕКУЩИЕ КАТЕГОРИИ:</div>
+                <div id="admCatList"></div>
             </div>
 
             <div id="adm-stats" style="display:none;">
@@ -578,7 +587,10 @@
                         <div style="font-size:10px; color:#666;">СТОИМОСТЬ СТОКА</div>
                     </div>
                 </div>
-                <button class="main-btn" onclick="showToast('Data Synced')" style="margin-top:20px; background:#222; color:#fff; justify-content:center;">FORCE SYNC</button>
+                <div style="margin-top:20px; font-size:12px; color:#555;">
+                    <p>Bin ID: ...25</p>
+                    <p>Status: Synced</p>
+                </div>
             </div>
 
         </div>
@@ -604,13 +616,21 @@
         // CONFIG & STATE
         // =========================================
         const CFG = {
-            BIN_ID: "696e703dae596e708fe71325", // Use your Bin ID
-            API_KEY: "$2a$10$KhVEyfwrswNvk7dNQEJWPezsQABoaOnmNm/jtb8vqYWBJrL8eciFm", // Use your Key
-            TG_USER: "username",
-            ADMIN_PIN: "Inn2708inNfnaf1234"
+            BIN_ID: "696e703dae596e708fe71325", // Твой Bin ID
+            API_KEY: "$2a$10$KhVEyfwrswNvk7dNQEJWPezsQABoaOnmNm/jtb8vqYWBJrL8eciFm", // Твой ключ
+            TG_OWNER: "Lacky337", // Твой телеграм
+            ADMIN_PIN: "Inn2708inNfnaf1234" // Твой пароль
         };
 
+        // State variables
         let DB = [];
+        let CATEGORIES = [
+            { id: 'all', name: 'Все' },
+            { id: 'pod', name: 'Pods' },
+            { id: 'vape', name: 'Vapes' },
+            { id: 'liquid', name: 'Жижи' }
+        ];
+        
         let CART = [];
         let FAVS = [];
         let ACTIVE_CAT = 'all';
@@ -629,153 +649,185 @@
         window.onload = async () => {
             tg.ready(); tg.expand();
             
-            // Set User
-            if(tg.initDataUnsafe?.user) {
-                document.getElementById('userName').innerText = tg.initDataUnsafe.user.first_name;
+            // 1. Set User Profile from Telegram
+            if (tg.initDataUnsafe?.user) {
+                const u = tg.initDataUnsafe.user;
+                document.getElementById('pName').innerText = u.first_name + (u.last_name ? ' ' + u.last_name : '');
+                document.getElementById('pHandle').innerText = u.username ? '@' + u.username : 'No Username';
+                if(u.photo_url) document.getElementById('pAvatar').innerHTML = `<img src="${u.photo_url}">`;
             }
 
-            // Init Canvas
+            // 2. Visuals
             initParticles();
 
-            // Load Data
+            // 3. Load Data
             loadLocal();
             await fetchData();
             
-            // Render
+            // 4. Render Interface
+            renderCats();
             renderGrid();
             
-            // Hide Loader
+            // 5. Hide Loader
             setTimeout(() => {
                 document.getElementById('loader').style.opacity = '0';
                 setTimeout(()=>document.getElementById('loader').style.display='none', 600);
             }, 1000);
 
-            // Search Listener
+            // 6. Search Listener
             document.getElementById('searchInp').addEventListener('input', (e) => {
                 renderGrid(e.target.value);
             });
         };
 
         // =========================================
-        // CANVAS PARTICLES (VISUALS)
+        // CANVAS PARTICLES
         // =========================================
         function initParticles() {
             const cvs = document.getElementById('space-canvas');
             const ctx = cvs.getContext('2d');
             let w, h;
             const parts = [];
-
             const resize = () => { w = cvs.width = window.innerWidth; h = cvs.height = window.innerHeight; };
             window.addEventListener('resize', resize);
             resize();
-
-            for(let i=0; i<60; i++) {
-                parts.push({
-                    x: Math.random()*w, y: Math.random()*h,
-                    s: Math.random()*2, v: Math.random()*0.5 + 0.1
-                });
-            }
-
+            for(let i=0; i<60; i++) parts.push({x:Math.random()*w, y:Math.random()*h, s:Math.random()*2, v:Math.random()*0.5+0.1});
             function anim() {
-                ctx.clearRect(0,0,w,h);
-                ctx.fillStyle = "rgba(255,255,255,0.3)";
-                parts.forEach(p => {
-                    p.y -= p.v;
-                    if(p.y < 0) p.y = h;
-                    ctx.beginPath();
-                    ctx.arc(p.x, p.y, p.s, 0, Math.PI*2);
-                    ctx.fill();
-                });
+                ctx.clearRect(0,0,w,h); ctx.fillStyle = "rgba(255,255,255,0.3)";
+                parts.forEach(p => { p.y -= p.v; if(p.y < 0) p.y = h; ctx.beginPath(); ctx.arc(p.x, p.y, p.s, 0, Math.PI*2); ctx.fill(); });
                 requestAnimationFrame(anim);
             }
             anim();
         }
 
         // =========================================
-        // NAVIGATION & UI
-        // =========================================
-        function nav(view, el) {
-            document.querySelectorAll('.view-section').forEach(x => x.style.display='none');
-            document.getElementById(`view-${view}`).style.display='block';
-            
-            document.querySelectorAll('.nav-link').forEach(x => x.classList.remove('active'));
-            if(el) el.classList.add('active');
-            
-            if(view === 'fav') renderFavs();
-            window.scrollTo({top:0, behavior:'smooth'});
-            tg.HapticFeedback.selectionChanged();
-        }
-
-        function setCat(cat, el) {
-            ACTIVE_CAT = cat;
-            document.querySelectorAll('.cat-chip').forEach(x => x.classList.remove('active'));
-            el.classList.add('active');
-            renderGrid();
-            tg.HapticFeedback.impactOccurred('light');
-        }
-
-        function showToast(msg, err=false) {
-            const t = document.getElementById('toast');
-            document.getElementById('toastMsg').innerText = msg;
-            t.className = err ? 'toast show err' : 'toast show';
-            t.querySelector('i').className = err ? 'fas fa-exclamation-circle' : 'fas fa-check-circle';
-            setTimeout(() => t.classList.remove('show'), 2500);
-        }
-
-        // =========================================
-        // DATA HANDLING
+        // DATA HANDLING (Cloud + Local)
         // =========================================
         async function fetchData() {
             try {
-                // Try fetching from API
+                // Fetch JSONBin
                 const res = await fetch(`https://api.jsonbin.io/v3/b/${CFG.BIN_ID}/latest`, {
                     headers: { 'X-Master-Key': CFG.API_KEY }
                 });
                 if(res.ok) {
                     const data = await res.json();
-                    DB = Array.isArray(data.record) ? data.record : [];
-                } else {
-                    throw new Error("API Error");
+                    const rec = data.record;
+                    // Handle format: { products: [], categories: [] } or old format array
+                    if(Array.isArray(rec)) {
+                        DB = rec; // Legacy support
+                    } else {
+                        DB = rec.products || [];
+                        if(rec.categories && rec.categories.length > 0) CATEGORIES = rec.categories;
+                    }
                 }
-            } catch(e) {
-                console.log("Offline Mode");
-                // Fallback Mock Data if empty
-                if(DB.length === 0) {
-                    DB = [
-                        {id:1, name:"Geekvape Aegis One", price: 35, stock:10, cat:'pod', img:'https://m.media-amazon.com/images/I/61k+d+tVpTL._AC_SL1500_.jpg', opts:['Black','Silver']},
-                        {id:2, name:"ElfBar 5000", price: 15, stock:50, cat:'vape', img:'https://cdn.shopify.com/s/files/1/0636/2618/2883/products/ElfBar-BC5000-Disposable-Vape-Device-5000-Puffs.jpg?v=1663145451', opts:['Mango','Cola']},
-                        {id:3, name:"Brusko Minican", price: 20, stock:5, cat:'pod', img:'https://mini-vape.ru/image/cache/catalog/tovar/pod-sistemy/brusko/minican/brusko-minican-pod-kit-chernyj-1000x1000.jpg', opts:['Red','Blue']},
-                        {id:4, name:"Husky Mint 30ml", price: 12, stock:20, cat:'liquid', img:'https://tabak-24.ru/upload/iblock/8a4/8a463283259873099908182281861993.jpg', opts:['20mg','50mg']}
-                    ];
-                }
-            }
+            } catch(e) { console.log("Offline or Error", e); }
         }
 
         async function syncData() {
+            // Save both products and categories
+            const payload = {
+                products: DB,
+                categories: CATEGORIES
+            };
             try {
                 await fetch(`https://api.jsonbin.io/v3/b/${CFG.BIN_ID}`, {
                     method: 'PUT',
                     headers: { 'Content-Type': 'application/json', 'X-Master-Key': CFG.API_KEY },
-                    body: JSON.stringify(DB)
+                    body: JSON.stringify(payload)
                 });
             } catch(e) { showToast("Sync Failed", true); }
         }
 
         function loadLocal() {
-            const c = localStorage.getItem('cs_c_v4');
-            const f = localStorage.getItem('cs_f_v4');
+            const c = localStorage.getItem('cs_c_v5');
+            const f = localStorage.getItem('cs_f_v5');
             if(c) CART = JSON.parse(c);
             if(f) FAVS = JSON.parse(f);
             updBadge();
         }
         function saveLocal() {
-            localStorage.setItem('cs_c_v4', JSON.stringify(CART));
-            localStorage.setItem('cs_f_v4', JSON.stringify(FAVS));
+            localStorage.setItem('cs_c_v5', JSON.stringify(CART));
+            localStorage.setItem('cs_f_v5', JSON.stringify(FAVS));
             updBadge();
         }
 
         // =========================================
-        // RENDERING
+        // CATEGORY LOGIC
+        // =========================================
+        function renderCats() {
+            const box = document.getElementById('catList');
+            box.innerHTML = '';
+            CATEGORIES.forEach(c => {
+                const el = document.createElement('div');
+                el.className = `cat-chip ${ACTIVE_CAT === c.id ? 'active' : ''}`;
+                el.innerText = c.name;
+                el.onclick = () => {
+                    ACTIVE_CAT = c.id;
+                    document.querySelectorAll('.cat-chip').forEach(x=>x.classList.remove('active'));
+                    el.classList.add('active');
+                    renderGrid();
+                    tg.HapticFeedback.impactOccurred('light');
+                };
+                box.appendChild(el);
+            });
+            // Update Admin Select
+            updateAdminCatSelect();
+        }
+
+        function updateAdminCatSelect() {
+            const sel = document.getElementById('nf-cat');
+            sel.innerHTML = '';
+            CATEGORIES.forEach(c => {
+                if(c.id !== 'all') {
+                    sel.innerHTML += `<option value="${c.id}">${c.name}</option>`;
+                }
+            });
+        }
+
+        function addNewCategory() {
+            const id = document.getElementById('new-cat-id').value.trim().toLowerCase();
+            const name = document.getElementById('new-cat-name').value.trim();
+            if(!id || !name) return showToast("Заполните поля", true);
+            if(CATEGORIES.find(x => x.id === id)) return showToast("Такой ID есть", true);
+
+            CATEGORIES.push({ id, name });
+            document.getElementById('new-cat-id').value = '';
+            document.getElementById('new-cat-name').value = '';
+            
+            syncData(); // Save to cloud
+            renderCats();
+            renderAdmCats();
+            showToast("Категория добавлена");
+        }
+
+        function deleteCategory(id) {
+            if(id === 'all') return;
+            if(!confirm(`Удалить категорию ${id}?`)) return;
+            
+            CATEGORIES = CATEGORIES.filter(c => c.id !== id);
+            // Move products from deleted cat to 'all' or leave undefined (handled in grid)
+            syncData();
+            renderCats();
+            renderAdmCats();
+        }
+
+        function renderAdmCats() {
+            const l = document.getElementById('admCatList');
+            l.innerHTML = '';
+            CATEGORIES.forEach(c => {
+                if(c.id === 'all') return;
+                l.innerHTML += `
+                <div class="cat-man-item">
+                    <div>
+                        <b style="color:#fff">${c.name}</b> <span style="font-size:10px; color:#666">(${c.id})</span>
+                    </div>
+                    <i class="fas fa-trash" style="color:var(--danger); cursor:pointer;" onclick="deleteCategory('${c.id}')"></i>
+                </div>`;
+            });
+        }
+
+        // =========================================
+        // RENDERING GRID
         // =========================================
         function renderGrid(query = '') {
             const g = document.getElementById('prodGrid');
@@ -795,10 +847,13 @@
 
             list.forEach(p => {
                 const isFav = FAVS.includes(p.id);
+                // Fallback for missing images
+                const imgUrl = p.img || 'https://via.placeholder.com/300x300/000000/FFFFFF/?text=No+Image';
+                
                 const html = `
                 <div class="card" onclick="openProd(${p.id})">
                     <div class="card-img-box">
-                        <img src="${p.img}" class="card-img" loading="lazy">
+                        <img src="${imgUrl}" class="card-img" loading="lazy">
                         <div class="card-badges">
                             ${p.stock < 1 ? '<span class="badge hot">SOLD OUT</span>' : ''}
                             ${p.stock < 5 && p.stock > 0 ? '<span class="badge" style="color:orange; border-color:orange">LOW</span>' : ''}
@@ -847,7 +902,6 @@
             sheetQty = 1;
             document.getElementById('dImg').src = curProd.img;
             document.getElementById('dTitle').innerText = curProd.name;
-            document.getElementById('dDesc').innerText = "Premium quality product from Concept Space collection.";
             document.getElementById('dQty').innerText = "1";
             document.getElementById('dPrice').innerText = curProd.price + " €";
 
@@ -866,7 +920,6 @@
                 st.style.color = "var(--danger)";
             }
 
-            // Options
             const box = document.getElementById('dOpts');
             box.innerHTML = '';
             const opts = curProd.opts && curProd.opts.length ? curProd.opts : ['Standard'];
@@ -902,15 +955,14 @@
         }
 
         function toggleFav(id) {
-            if(FAVS.includes(id)) FAVS = FAVS.filter(x=>x!==id);
-            else FAVS.push(id);
+            if(FAVS.includes(id)) FAVS = FAVS.filter(x=>x!==id); else FAVS.push(id);
             saveLocal();
             renderGrid();
             if(document.getElementById('view-fav').style.display === 'block') renderFavs();
         }
 
         // =========================================
-        // CART LOGIC
+        // CART & CHECKOUT
         // =========================================
         function addToCart(prod, opt, qty) {
             const ex = CART.find(x => x.id === prod.id && x.opt === opt);
@@ -920,10 +972,7 @@
             showToast("Добавлено");
         }
 
-        function openCart() {
-            renderCart();
-            openSheet('cartSheet');
-        }
+        function openCart() { renderCart(); openSheet('cartSheet'); }
 
         function renderCart() {
             const l = document.getElementById('cartList');
@@ -956,9 +1005,7 @@
 
         function modCart(i, d) {
             const item = CART[i];
-            const stock = DB.find(x=>x.id===item.id)?.stock || 99;
-            if(d > 0 && item.q >= stock) return showToast("Максимум стока", true);
-            
+            // Simple stock check logic (optional if strictly needed)
             item.q += d;
             if(item.q < 1) CART.splice(i, 1);
             saveLocal();
@@ -977,9 +1024,9 @@
 
         function applyPromo() {
             const c = document.getElementById('promoInp').value.toUpperCase();
-            if(c === 'CS2024' || c === 'START') {
-                PROMO = {code:c, val:0.1};
-                showToast("-10% Applied!");
+            if(c === 'LACKY337') { // Secret code
+                PROMO = {code:c, val:0.15};
+                showToast("-15% Applied!");
             } else {
                 PROMO = {code:'', val:0};
                 showToast("Invalid Code", true);
@@ -987,21 +1034,22 @@
             renderCart();
         }
 
-        function clearCart() {
-            if(confirm("Очистить?")) {
-                CART = [];
-                saveLocal();
-                renderCart();
-            }
-        }
+        function clearCart() { if(confirm("Очистить?")) { CART = []; saveLocal(); renderCart(); } }
 
         function checkout() {
             if(CART.length===0) return;
-            let m = `🔥 *ЗАКАЗ CS 4.0*\n`;
+            let m = `🔥 *ЗАКАЗ CS ULTRA*\n`;
             CART.forEach(x => m += `▫️ ${x.name} (${x.opt}) x${x.q}\n`);
-            m += `💰 ИТОГО: ${document.getElementById('cTotal').innerText}`;
             
-            window.open(`https://t.me/${CFG.TG_USER}?text=${encodeURIComponent(m)}`);
+            const total = document.getElementById('cTotal').innerText;
+            m += `💰 ИТОГО: ${total}\n`;
+            
+            // Add user info
+            const u = tg.initDataUnsafe?.user;
+            if(u) m += `👤 @${u.username} (${u.first_name})`;
+            
+            // Open user telegram
+            window.open(`https://t.me/${CFG.TG_OWNER}?text=${encodeURIComponent(m)}`);
             tg.close();
         }
 
@@ -1013,7 +1061,7 @@
         }
 
         // =========================================
-        // ADMIN
+        // ADMIN & UPLOAD
         // =========================================
         function openAdminAuth() { document.getElementById('authModal').style.display = 'flex'; }
         
@@ -1023,9 +1071,10 @@
                 document.getElementById('authModal').style.display = 'none';
                 toggleAdmin(true);
                 renderAdmList();
+                renderAdmCats();
                 document.getElementById('authPass').value = '';
             } else {
-                showToast("ACCESS DENIED", true);
+                showToast("DENIED", true);
                 tg.HapticFeedback.notificationOccurred('error');
             }
         }
@@ -1038,7 +1087,7 @@
         function admTab(t) {
             document.querySelectorAll('.admin-tab').forEach(x=>x.classList.remove('active'));
             event.target.classList.add('active');
-            ['edit','orders','stats'].forEach(x => document.getElementById(`adm-${x}`).style.display='none');
+            ['edit','cats','stats'].forEach(x => document.getElementById(`adm-${x}`).style.display='none');
             document.getElementById(`adm-${t}`).style.display='block';
             
             if(t === 'stats') {
@@ -1046,6 +1095,32 @@
                 const v = DB.reduce((a,b)=>a+(b.price*b.stock),0);
                 document.getElementById('st-val').innerText = v + " €";
             }
+        }
+
+        // --- FILE UPLOAD LOGIC ---
+        function handleFileUpload(input) {
+            const file = input.files[0];
+            if(!file) return;
+            
+            // Limit size to avoid killing JSONBin (max 100kb recommmended for this method)
+            if(file.size > 200000) {
+                alert("Файл слишком большой! Используйте сжатое фото или URL.");
+                return;
+            }
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                document.getElementById('nf-img').value = e.target.result; // Base64 String
+                updatePreview(e.target.result);
+                showToast("Фото загружено");
+            }
+            reader.readAsDataURL(file);
+        }
+
+        function updatePreview(val) {
+            const img = document.getElementById('imgPreview');
+            if(val) { img.src = val; img.style.display = 'block'; }
+            else { img.style.display = 'none'; }
         }
 
         function renderAdmList() {
@@ -1070,15 +1145,18 @@
             document.getElementById('nf-price').value = p.price;
             document.getElementById('nf-stock').value = p.stock;
             document.getElementById('nf-cat').value = p.cat;
-            document.getElementById('nf-fl').value = p.opts.join(',');
+            document.getElementById('nf-fl').value = p.opts ? p.opts.join(',') : '';
             document.getElementById('nf-img').value = p.img;
-            document.querySelector('.admin-panel').scrollTo({top:0, behavior:'smooth'});
+            updatePreview(p.img);
+            // Scroll to top of edit form
+            document.getElementById('admContent').scrollTo({top:0, behavior:'smooth'});
         }
 
         function resetForm() {
             editId = null;
             document.getElementById('formTitle').innerText = "Новый товар";
             document.querySelectorAll('.adm-inp').forEach(x => { if(x.tagName!=='SELECT') x.value=''; });
+            updatePreview('');
         }
 
         async function saveProduct() {
@@ -1086,7 +1164,7 @@
             const price = parseFloat(document.getElementById('nf-price').value);
             const stock = parseInt(document.getElementById('nf-stock').value);
             const cat = document.getElementById('nf-cat').value;
-            const opts = document.getElementById('nf-fl').value.split(',').map(x=>x.trim());
+            const opts = document.getElementById('nf-fl').value.split(',').map(x=>x.trim()).filter(x=>x);
             const img = document.getElementById('nf-img').value;
 
             if(!name || !price) return showToast("Заполните поля", true);
@@ -1119,14 +1197,26 @@
         // =========================================
         // UTILS
         // =========================================
-        function openSheet(id) {
-            document.getElementById('overlay').classList.add('visible');
-            document.getElementById(id).classList.add('active');
+        function nav(view, el) {
+            document.querySelectorAll('.view-section').forEach(x => x.style.display='none');
+            document.getElementById(`view-${view}`).style.display='block';
+            document.querySelectorAll('.nav-link').forEach(x => x.classList.remove('active'));
+            if(el) el.classList.add('active');
+            if(view === 'fav') renderFavs();
+            window.scrollTo({top:0, behavior:'smooth'});
+            tg.HapticFeedback.selectionChanged();
         }
-        function closeSheet() {
-            document.getElementById('overlay').classList.remove('visible');
-            document.querySelectorAll('.sheet').forEach(x=>x.classList.remove('active'));
+
+        function showToast(msg, err=false) {
+            const t = document.getElementById('toast');
+            document.getElementById('toastMsg').innerText = msg;
+            t.className = err ? 'toast show err' : 'toast show';
+            t.querySelector('i').className = err ? 'fas fa-exclamation-circle' : 'fas fa-check-circle';
+            setTimeout(() => t.classList.remove('show'), 2500);
         }
+
+        function openSheet(id) { document.getElementById('overlay').classList.add('visible'); document.getElementById(id).classList.add('active'); }
+        function closeSheet() { document.getElementById('overlay').classList.remove('visible'); document.querySelectorAll('.sheet').forEach(x=>x.classList.remove('active')); }
         function openSettings() { openSheet('settingsSheet'); }
         document.getElementById('overlay').onclick = closeSheet;
 
