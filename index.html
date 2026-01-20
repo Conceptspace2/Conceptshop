@@ -464,7 +464,7 @@
             </div>
 
             <div style="text-align:center; margin-top:30px; color:#333; font-size:10px; font-weight:800; letter-spacing:2px;">
-                CONCEPT SPACE v3.0 ULTRA
+                CONCEPT SPACE v3.1 ULTRA
             </div>
         </div>
 
@@ -626,7 +626,7 @@
                     </select>
                     <button class="btn-main" onclick="saveUserRole()" style="height:45px; background:var(--accent-gold); color:#000;">ВЫДАТЬ ПРАВА</button>
                 </div>
-                <div style="font-size:10px; font-weight:bold; color:#666; margin-bottom:10px; padding-left:5px;">СПИСОК ПОЛЬЗОВАТЕЛЕЙ</div>
+                <div style="font-size:10px; font-weight:bold; color:#666; margin-bottom:10px; padding-left:5px;">ПОЛЬЗОВАТЕЛИ С ПРАВАМИ</div>
                 <div id="adm-users-list"></div>
             </div>
 
@@ -690,9 +690,18 @@
 
             initStars();
             
-            // Load Local User Data
-            const local = localStorage.getItem('cs_user_v3');
-            if(local) USER = JSON.parse(local);
+            // Load Local User Data (BUG FIX: Improved parsing and defaults)
+            try {
+                const local = localStorage.getItem('cs_user_v3');
+                if(local) {
+                    USER = JSON.parse(local);
+                    if(!USER.cart) USER.cart = [];
+                    if(!USER.favs) USER.favs = [];
+                }
+            } catch(e) {
+                console.error("Cache corrupted, resetting user", e);
+                USER = { cart: [], favs: [] };
+            }
             
             // Sync with Cloud
             await cloudLoad();
@@ -719,9 +728,12 @@
             if (u) {
                 // Name
                 document.getElementById('profile-name').innerText = (u.first_name + ' ' + (u.last_name || '')).toUpperCase();
-                // Username (Nick)
+                
+                // Username (Nick) Logic with Status Decorators
+                const nickEl = document.getElementById('profile-nick');
                 const nick = u.username ? '@' + u.username : 'GUEST';
-                document.getElementById('profile-nick').innerHTML = nick;
+                nickEl.innerHTML = nick;
+                
                 // ID
                 document.getElementById('profile-id').innerText = `ID: ${u.id}`;
                 
@@ -733,28 +745,44 @@
                     document.getElementById('profile-icon-default').style.display = 'none';
                 }
 
-                // !!! GOD MODE CHECK !!!
+                // !!! GOD MODE CHECK & ROLES !!!
                 if (u.id === CFG.OWNER_ID) {
                     UI.role = 'admin';
-                    // Добавляем галочку для владельца
-                    document.getElementById('profile-nick').innerHTML += ' <i class="fas fa-check-circle" style="color:var(--accent-blue); font-size:12px; margin-left:4px;"></i>';
                 } else if(STATE.users && STATE.users[u.id]) {
                     UI.role = STATE.users[u.id];
                 }
             } else {
-                 // For testing in browser without Telegram
+                 // For browser testing only
                  // UI.role = 'admin'; 
             }
 
-            // Apply Role to UI
+            // Apply Role to UI (Visuals)
             const st = document.getElementById('status-text');
-            st.innerText = UI.role.toUpperCase();
+            const nickEl = document.getElementById('profile-nick');
             
-            if(UI.role === 'admin' || UI.role === 'manager') {
-                document.getElementById('admin-float-btn').style.display = 'flex';
+            if(UI.role === 'admin') {
+                st.innerText = "ADMINISTRATOR";
                 st.style.color = 'var(--accent-gold)';
-            } else if (UI.role === 'vip') {
+                document.getElementById('admin-float-btn').style.display = 'flex';
+                // Gold Star for Admin
+                nickEl.innerHTML += ' <i class="fas fa-star" style="color:var(--accent-gold); font-size:12px; margin-left:4px;" title="Admin"></i>';
+            } 
+            else if(UI.role === 'manager') {
+                st.innerText = "MANAGER";
+                st.style.color = 'var(--accent-blue)';
+                document.getElementById('admin-float-btn').style.display = 'flex';
+                // Blue Check for Manager
+                nickEl.innerHTML += ' <i class="fas fa-check-circle" style="color:var(--accent-blue); font-size:12px; margin-left:4px;" title="Manager"></i>';
+            }
+            else if(UI.role === 'vip') {
+                st.innerText = "VIP CLIENT";
                 st.style.color = 'var(--accent-purple)';
+                // Purple Diamond for VIP
+                nickEl.innerHTML += ' <i class="fas fa-gem" style="color:var(--accent-purple); font-size:12px; margin-left:4px;" title="VIP"></i>';
+            }
+            else {
+                st.innerText = "CLIENT";
+                st.style.color = '#555';
             }
         }
 
@@ -967,29 +995,44 @@
         }
 
         function modQty(d) {
-            const newQ = UI.curProd._qty + d;
+            const current = parseInt(UI.curProd._qty) || 1;
+            const newQ = current + d;
+            
             if(newQ < 1) return;
             if(newQ > UI.curProd.stock) return showToast("Максимум в наличии", true);
+            
             UI.curProd._qty = newQ;
             document.getElementById('pd-qty').innerText = newQ;
+            
+            // Calculate temp total price visual
             document.getElementById('pd-price').innerText = (UI.curProd.price * newQ).toFixed(2) + " €";
         }
 
         function addToCart() {
+            // BUG FIX: Ensure we are pushing copies and clean numbers
+            const finalQty = parseInt(UI.curProd._qty);
+            
+            if(isNaN(finalQty) || finalQty < 1) {
+                return showToast("Ошибка количества", true);
+            }
+
             const item = {
                 id: UI.curProd.id,
                 name: UI.curProd.name,
-                price: UI.curProd.price,
+                price: parseFloat(UI.curProd.price),
                 img: UI.curProd.img,
                 opt: UI.curProd._selOpt,
-                q: UI.curProd._qty
+                q: finalQty
             };
             
             const exist = USER.cart.find(x => x.id === item.id && x.opt === item.opt);
-            if(exist) exist.q += item.q;
-            else USER.cart.push(item);
+            if(exist) {
+                exist.q += item.q;
+            } else {
+                USER.cart.push(item);
+            }
             
-            saveUser();
+            saveUser(); // Save immediately to local storage
             closeAll();
             showToast("Добавлено в корзину");
             tg.HapticFeedback.notificationOccurred('success');
@@ -1015,14 +1058,15 @@
             if(!USER.cart.length) l.innerHTML = '<div style="text-align:center; padding:40px; color:#555; font-size:12px;">Тут пусто, как в черной дыре...</div>';
             
             USER.cart.forEach((item, i) => {
-                total += item.price * item.q;
+                const itemTotal = item.price * item.q;
+                total += itemTotal;
                 l.innerHTML += `
                 <div class="cart-item">
                     <img src="${item.img}" style="width:60px; height:60px; border-radius:12px; object-fit:cover;">
                     <div style="flex:1">
                         <div style="font-weight:bold; font-size:13px; margin-bottom:4px;">${item.name}</div>
                         <div style="font-size:11px; color:#888; background:rgba(255,255,255,0.05); display:inline-block; padding:2px 6px; border-radius:4px;">${item.opt}</div>
-                        <div style="color:var(--accent-green); font-size:13px; font-weight:800; margin-top:4px;">${(item.price*item.q).toFixed(2)} €</div>
+                        <div style="color:var(--accent-green); font-size:13px; font-weight:800; margin-top:4px;">${itemTotal.toFixed(2)} €</div>
                     </div>
                     <div style="font-weight:800; font-size:14px; margin-right:10px;">x${item.q}</div>
                     <i class="fas fa-trash" style="color:#555; padding:10px;" onclick="delCart(${i})"></i>
@@ -1039,7 +1083,7 @@
         function checkout() {
             if(!USER.cart.length) return;
             let m = "🚀 *NEW ORDER | CONCEPT SPACE*\n\n";
-            USER.cart.forEach(x => m += `▪️ ${x.name} (${x.opt}) x${x.q} = ${x.price*x.q}€\n`);
+            USER.cart.forEach(x => m += `▪️ ${x.name} (${x.opt}) x${x.q} = ${(x.price*x.q).toFixed(2)}€\n`);
             m += `\n💰 *TOTAL: ${document.getElementById('cart-total').innerText}*`;
             m += `\n👤 User: @${tg.initDataUnsafe?.user?.username || 'Guest'} (ID: ${tg.initDataUnsafe?.user?.id || '?'})`;
             window.open(`https://t.me/${CFG.TG_OWNER}?text=${encodeURIComponent(m)}`);
@@ -1221,13 +1265,22 @@
             l.innerHTML = '';
             const users = STATE.users || {};
             for(const [id, role] of Object.entries(users)) {
+                let color = '#fff';
+                let icon = 'fa-user';
+                if(role === 'admin') { color = 'var(--accent-gold)'; icon = 'fa-star'; }
+                if(role === 'manager') { color = 'var(--accent-blue)'; icon = 'fa-check-circle'; }
+                if(role === 'vip') { color = 'var(--accent-purple)'; icon = 'fa-gem'; }
+
                 l.innerHTML += `
                 <div style="background:#1a1a1a; padding:12px; border-radius:10px; margin-bottom:6px; display:flex; justify-content:space-between; align-items:center; border:1px solid #333;">
-                    <div>
-                        <div style="font-size:12px; font-weight:bold;">ID: ${id}</div>
-                        <div style="font-size:10px; color:${role==='admin'?'var(--accent-green)':'var(--accent-purple)'}">${role.toUpperCase()}</div>
+                    <div style="display:flex; align-items:center; gap:10px;">
+                        <i class="fas ${icon}" style="color:${color}; font-size:16px;"></i>
+                        <div>
+                            <div style="font-size:12px; font-weight:bold;">ID: ${id}</div>
+                            <div style="font-size:10px; color:${color}; letter-spacing:1px; font-weight:800;">${role.toUpperCase()}</div>
+                        </div>
                     </div>
-                    <i class="fas fa-trash" style="color:var(--accent-red); cursor:pointer;" onclick="removeRole('${id}')"></i>
+                    <i class="fas fa-trash" style="color:var(--accent-red); cursor:pointer; padding:5px;" onclick="removeRole('${id}')"></i>
                 </div>`;
             }
         }
