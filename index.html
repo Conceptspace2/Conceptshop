@@ -378,6 +378,7 @@
             justify-content: center; align-items: center; gap: 10px;
             box-shadow: 0 8px 30px var(--accent-green-dim); transition: 0.3s;
             position: relative; overflow: hidden;
+            cursor: pointer;
         }
         .btn-main::after {
             content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%;
@@ -416,6 +417,7 @@
             border-radius: 50%; color: #666; display: flex; align-items: center; justify-content: center;
             border: 1px solid #444; z-index: 150; transition: 0.3s; box-shadow: 0 10px 40px rgba(0,0,0,0.6);
             animation: pulse-border 3s infinite;
+            cursor: pointer;
         }
         @keyframes pulse-border { 0% { box-shadow: 0 0 0 0 rgba(0,255,157,0.3); } 70% { box-shadow: 0 0 0 15px rgba(0,255,157,0); } 100% { box-shadow: 0 0 0 0 rgba(0,255,157,0); } }
         
@@ -430,7 +432,7 @@
         
         .adm-nav { padding: 25px 20px; border-bottom: 1px solid #222; display: flex; justify-content: space-between; align-items: center; background: #080808; }
         .adm-tabs { display: flex; background: #080808; border-bottom: 1px solid #222; overflow-x: auto; }
-        .adm-tab { flex: 1; padding: 16px; text-align: center; font-size: 11px; font-weight: 800; color: #555; letter-spacing: 1px; min-width: 80px; white-space: nowrap; transition:0.3s; }
+        .adm-tab { flex: 1; padding: 16px; text-align: center; font-size: 11px; font-weight: 800; color: #555; letter-spacing: 1px; min-width: 80px; white-space: nowrap; transition:0.3s; cursor: pointer; }
         .adm-tab.active { color: var(--accent-green); border-bottom: 2px solid var(--accent-green); background: rgba(0,255,157,0.05); text-shadow: 0 0 10px var(--accent-green-dim); }
 
         .adm-content { flex: 1; overflow-y: auto; padding: 20px; }
@@ -442,6 +444,7 @@
             display: flex; align-items: center; justify-content: center; gap: 10px;
             background: #1a1a1a; padding: 20px; border: 1px dashed #444; border-radius: 14px;
             color: #888; font-size: 12px; margin-bottom: 12px; transition: 0.2s;
+            cursor: pointer;
         }
         .adm-file-label:active { background: #222; border-color: #666; }
 
@@ -455,6 +458,20 @@
         #toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
         #toast.success i { color: var(--accent-green); text-shadow: 0 0 10px var(--accent-green); }
         #toast.error i { color: var(--accent-red); text-shadow: 0 0 10px var(--accent-red); }
+
+        /* LOADING SPINNER */
+        .spinner-small {
+            width: 16px; height: 16px; border: 2px solid rgba(255,255,255,0.3); 
+            border-top-color: #fff; border-radius: 50%; animation: spin 0.8s linear infinite;
+        }
+
+        /* NEW IMPROVED STYLES FOR SYNC */
+        .sync-badge {
+            font-size: 9px; padding: 4px 8px; border-radius: 8px; background: rgba(255,255,255,0.05); 
+            color: #555; display:flex; align-items:center; gap:5px; transition: 0.3s; border: 1px solid transparent;
+        }
+        .sync-badge.syncing { color: var(--accent-blue); border-color: rgba(0, 240, 255, 0.3); box-shadow: 0 0 10px rgba(0, 240, 255, 0.1); }
+        .sync-badge.syncing i { animation: spin 1s linear infinite; }
 
         /* ANIMATIONS */
         @keyframes spin { 100% { transform: rotate(360deg); } }
@@ -478,7 +495,10 @@
 
     <header class="header">
         <div class="brand"><i class="fas fa-meteor"></i> CONCEPT SPACE</div>
-        <div class="status-badge"><div class="status-dot"></div> ONLINE</div>
+        <div style="display:flex; gap:10px; align-items:center;">
+             <div id="sync-status" class="sync-badge"><i class="fas fa-sync-alt"></i> SYNC</div>
+             <div class="status-badge"><div class="status-dot"></div> ONLINE</div>
+        </div>
     </header>
 
     <div class="content-area" id="main-scroll">
@@ -656,7 +676,12 @@
             <div style="font-weight:900; font-size:18px; color:var(--accent-green); display:flex; align-items:center; gap:10px; text-shadow:0 0 10px var(--accent-green-dim);">
                 <i class="fas fa-terminal"></i> CS:ADMIN
             </div>
-            <i class="fas fa-times" onclick="toggleAdmin(false)" style="font-size:24px; padding:5px; color:#666;"></i>
+            <div style="display:flex; gap:10px; align-items:center;">
+                <div class="sync-badge" onclick="forceSync()" style="cursor:pointer; border:1px solid #333; padding:6px 10px;">
+                    <i class="fas fa-sync" id="adm-sync-icon"></i> FORCE SYNC
+                </div>
+                <i class="fas fa-times" onclick="toggleAdmin(false)" style="font-size:24px; padding:5px; color:#666; cursor:pointer;"></i>
+            </div>
         </div>
         <div class="adm-tabs">
             <div class="adm-tab active" onclick="setTab('dash')">DASHBOARD</div>
@@ -717,7 +742,7 @@
                     </label>
                     <img id="prev-prod" style="width:100%; height:150px; object-fit:cover; border-radius:12px; margin-bottom:15px; display:none; border:1px solid #333;">
 
-                    <button class="btn-main" onclick="saveProduct()" style="height:50px;">SAVE PRODUCT <i class="fas fa-save"></i></button>
+                    <button class="btn-main" id="btn-save-prod" onclick="saveProduct()" style="height:50px;">SAVE PRODUCT <i class="fas fa-save"></i></button>
                 </div>
                 <div id="adm-prod-list"></div>
             </div>
@@ -743,7 +768,7 @@
                     </label>
                     <img id="prev-ban" style="width:100%; height:100px; object-fit:cover; border-radius:12px; margin-bottom:15px; display:none;">
 
-                    <button class="btn-main" onclick="saveBanner()" style="height:50px;">ADD BANNER</button>
+                    <button class="btn-main" id="btn-save-ban" onclick="saveBanner()" style="height:50px;">ADD BANNER</button>
                 </div>
                 <div style="font-size:10px; font-weight:bold; color:#666; margin-bottom:10px; padding-left:5px;">ACTIVE BANNERS</div>
                 <div id="adm-ban-list"></div>
@@ -753,7 +778,7 @@
                 <div class="adm-card">
                     <input id="cf-id" class="adm-input" placeholder="ID (vape, pod...)">
                     <input id="cf-name" class="adm-input" placeholder="Name (Vapes)">
-                    <button class="btn-main" onclick="saveCat()" style="height:50px;">CREATE CATEGORY</button>
+                    <button class="btn-main" id="btn-save-cat" onclick="saveCat()" style="height:50px;">CREATE CATEGORY</button>
                 </div>
                 <div id="adm-cat-list"></div>
             </div>
@@ -797,7 +822,8 @@
             API_KEY: "$2a$10$KhVEyfwrswNvk7dNQEJWPezsQABoaOnmNm/jtb8vqYWBJrL8eciFm",
             ADMIN_PIN: "2708",
             TG_OWNER: "Lacky337",
-            OWNER_ID: 1017573139
+            OWNER_ID: 1017573139,
+            SYNC_INTERVAL: 10000 // Auto-sync every 10 seconds
         };
 
         // GLOBAL STATE
@@ -817,7 +843,7 @@
         };
 
         let USER = { cart: [], favs: [], orders: [] }; 
-        let UI = { activeCat: 'all', curProd: null, editId: null, role: 'client' };
+        let UI = { activeCat: 'all', curProd: null, editId: null, role: 'client', isSyncing: false };
         const tg = window.Telegram.WebApp;
 
         // =================================================================
@@ -845,6 +871,15 @@
                 console.error("Cache corrupted, resetting user", e);
                 USER = { cart: [], favs: [], orders: [] };
             }
+
+            // LOAD BACKUP STATE (In case of offline)
+            try {
+                const backupState = localStorage.getItem('cs_state_backup');
+                if(backupState) {
+                    const parsed = JSON.parse(backupState);
+                    if(parsed.products && parsed.products.length) STATE = parsed;
+                }
+            } catch(e) { console.log("No backup state found"); }
             
             // Sync with Cloud
             await cloudLoad();
@@ -866,6 +901,9 @@
             // Listeners
             document.getElementById('search-input').addEventListener('input', (e) => renderGrid(e.target.value));
             
+            // START AUTO-SYNC POLL
+            setInterval(autoSync, CFG.SYNC_INTERVAL);
+
             // COSMIC CLICK EFFECT
             window.addEventListener('click', (e) => {
                 const p = document.createElement('div');
@@ -944,9 +982,15 @@
         }
 
         // =================================================================
-        // CLOUD SYNC ENGINE
+        // CLOUD SYNC ENGINE (IMPROVED FOR MULTI-USER)
         // =================================================================
-        async function cloudLoad() {
+        async function autoSync() {
+            if(UI.isSyncing) return; // Don't sync if already syncing
+            
+            // Quiet sync
+            const badge = document.getElementById('sync-status');
+            badge.classList.add('syncing');
+            
             try {
                 const res = await fetch(`https://api.jsonbin.io/v3/b/${CFG.BIN_ID}/latest`, {
                     headers: { 'X-Master-Key': CFG.API_KEY }
@@ -954,38 +998,136 @@
                 if(res.ok) {
                     const json = await res.json();
                     const data = json.record;
-                    if(data.products) STATE.products = data.products;
-                    if(data.categories) STATE.categories = data.categories;
-                    if(data.banners) STATE.banners = data.banners;
-                    if(data.users) STATE.users = data.users || {};
-                    STATE.users[CFG.OWNER_ID] = "admin";
+                    
+                    // Check if data actually changed to avoid re-rendering needlessly
+                    if(JSON.stringify(data.products) !== JSON.stringify(STATE.products)) {
+                        STATE.products = data.products || [];
+                        STATE.categories = data.categories || [];
+                        STATE.banners = data.banners || [];
+                        if(data.users) STATE.users = data.users;
+                        
+                        renderAll(); // Re-render for users
+                        
+                        // Update backup
+                        localStorage.setItem('cs_state_backup', JSON.stringify(STATE));
+                        console.log("Auto-synced new data from space");
+                    }
                 }
-            } catch(e) { console.error("Offline"); showToast("Offline Mode Active", true); }
+            } catch(e) { console.error("Auto-sync silent fail"); }
+            
+            setTimeout(()=> badge.classList.remove('syncing'), 1000);
+        }
+
+        async function cloudLoad() {
+            setSyncState(true);
+            try {
+                const res = await fetch(`https://api.jsonbin.io/v3/b/${CFG.BIN_ID}/latest`, {
+                    headers: { 'X-Master-Key': CFG.API_KEY }
+                });
+                if(res.ok) {
+                    const json = await res.json();
+                    const data = json.record;
+                    
+                    // Robust check: Only overwrite if data is valid array
+                    if(Array.isArray(data.products)) STATE.products = data.products;
+                    if(Array.isArray(data.categories)) STATE.categories = data.categories;
+                    if(Array.isArray(data.banners)) STATE.banners = data.banners;
+                    if(data.users) STATE.users = data.users;
+                    
+                    // Save backup locally
+                    localStorage.setItem('cs_state_backup', JSON.stringify(STATE));
+                } else {
+                    console.warn("Cloud load returned non-200");
+                    showToast("Server Busy - Using Cache", true);
+                }
+            } catch(e) { 
+                console.error("Offline or Error", e); 
+                showToast("Offline Mode Active", true); 
+            }
+            setSyncState(false);
         }
 
         async function cloudSave() {
-            showToast("Syncing with Space...");
+            setSyncState(true);
+            showToast("Saving to Orbit...");
+            
             try {
+                // 1. FETCH LATEST FIRST (To merge changes from other admins)
                 const resCheck = await fetch(`https://api.jsonbin.io/v3/b/${CFG.BIN_ID}/latest`, {
                     headers: { 'X-Master-Key': CFG.API_KEY }
                 });
-                const jsonCheck = await resCheck.json();
-                let serverData = jsonCheck.record;
+                
+                let serverData = {};
+                if(resCheck.ok) {
+                    const jsonCheck = await resCheck.json();
+                    serverData = jsonCheck.record;
+                } else {
+                    // Fallback if read fails (dangerous, but necessary if bin is broken)
+                    serverData = { products: [], categories: [], banners: [], users: {} };
+                }
 
+                // 2. MERGE LOGIC
+                // We trust our local STATE for the things we just edited.
+                // Ideally, we'd have timestamps, but here we overwrite the specific lists.
+                // However, to prevent overwriting *other* people's adds if we didn't refresh, 
+                // we should have done a refresh before editing. 
+                // Since this is a simple app, we will push OUR State as the Source of Truth.
+                // *IMPROVEMENT*: The AutoSync handles the "pulling" part.
+                
                 serverData.products = STATE.products;
                 serverData.categories = STATE.categories;
                 serverData.banners = STATE.banners;
                 serverData.users = STATE.users;
+                
+                // Ensure owner is always admin
                 if(!serverData.users) serverData.users = {};
                 serverData.users[CFG.OWNER_ID] = "admin";
 
-                await fetch(`https://api.jsonbin.io/v3/b/${CFG.BIN_ID}`, {
+                // 3. PUSH
+                const saveRes = await fetch(`https://api.jsonbin.io/v3/b/${CFG.BIN_ID}`, {
                     method: 'PUT',
                     headers: { 'Content-Type': 'application/json', 'X-Master-Key': CFG.API_KEY },
                     body: JSON.stringify(serverData)
                 });
-                showToast("Data Saved Successfully!");
-            } catch(e) { showToast("Save Error", true); console.error(e); }
+                
+                if(saveRes.ok) {
+                    showToast("Data Saved Successfully!");
+                    // Update backup
+                    localStorage.setItem('cs_state_backup', JSON.stringify(STATE));
+                } else {
+                    throw new Error("Save returned " + saveRes.status);
+                }
+            } catch(e) { 
+                showToast("Save Failed! Try Again.", true); 
+                console.error(e); 
+            }
+            setSyncState(false);
+        }
+
+        function setSyncState(isSyncing) {
+            UI.isSyncing = isSyncing;
+            const badge = document.getElementById('sync-status');
+            const icon = document.getElementById('adm-sync-icon');
+            if(isSyncing) {
+                badge.classList.add('syncing');
+                if(icon) icon.classList.add('fa-spin');
+            } else {
+                badge.classList.remove('syncing');
+                if(icon) icon.classList.remove('fa-spin');
+            }
+        }
+        
+        async function forceSync() {
+            const btn = document.querySelector('[onclick="forceSync()"]');
+            btn.innerHTML = '<i class="fas fa-sync fa-spin"></i> SYNCING...';
+            await cloudLoad();
+            renderAll();
+            renderAdmList();
+            renderAdmPromo();
+            renderAdmCats();
+            renderAdmUsers();
+            btn.innerHTML = '<i class="fas fa-sync" id="adm-sync-icon"></i> FORCE SYNC';
+            showToast("Synced with Space");
         }
 
         // =================================================================
@@ -1056,7 +1198,7 @@
                 grid.innerHTML += `
                 <div class="card" onclick="openProd(${p.id})">
                     <div class="card-top">
-                        <img src="${p.img}" class="card-img" loading="lazy">
+                        <img src="${p.img}" class="card-img" loading="lazy" onerror="this.src='https://placehold.co/400x400/111/444?text=No+Image'">
                         <div class="card-status">
                             ${p.stock < 1 ? '<span class="badge hot">SOLD OUT</span>' : ''}
                             ${p.stock > 0 && p.stock < 5 ? '<span class="badge sale">LOW STOCK</span>' : ''}
@@ -1330,14 +1472,23 @@
             STATE.products.forEach(p => {
                 l.innerHTML += `
                 <div style="background:#1a1a1a; padding:10px; border-radius:12px; margin-bottom:10px; display:flex; align-items:center; gap:12px; border:1px solid #333;">
-                    <img src="${p.img}" style="width:50px; height:50px; border-radius:8px; object-fit:cover;">
+                    <img src="${p.img}" style="width:50px; height:50px; border-radius:8px; object-fit:cover;" onerror="this.src='https://placehold.co/100?text=Err'">
                     <div style="flex:1; font-size:12px;"><b>${p.name}</b><br><span style="color:#666">Stock: ${p.stock}</span></div>
                     <i class="fas fa-pen" style="color:#888; padding:10px; cursor:pointer;" onclick="editProd(${p.id})"></i>
                     <i class="fas fa-trash" style="color:var(--accent-red); padding:10px; cursor:pointer;" onclick="delProd(${p.id})"></i>
                 </div>`;
             });
         }
+        
         async function saveProduct() {
+            const btn = document.getElementById('btn-save-prod');
+            const originalText = btn.innerHTML;
+            btn.innerHTML = '<div class="spinner-small"></div> SAVING...';
+            btn.style.pointerEvents = 'none';
+
+            // First, make sure we have latest data to prevent overwriting other admins
+            await cloudLoad(); 
+
             const name = document.getElementById('nf-name').value;
             const price = parseFloat(document.getElementById('nf-price').value);
             const stock = parseInt(document.getElementById('nf-stock').value);
@@ -1345,20 +1496,28 @@
             const img = document.getElementById('nf-img').value;
             const opts = document.getElementById('nf-opts').value.split(',').map(x=>x.trim()).filter(Boolean);
 
-            if(!name || !price) return showToast("Fill fields!", true);
+            if(!name || !price) {
+                btn.innerHTML = originalText;
+                btn.style.pointerEvents = 'all';
+                return showToast("Fill fields!", true);
+            }
 
             const item = { id: UI.editId || Date.now(), name, price, stock, cat, img, opts };
             
             if(UI.editId) {
                 const idx = STATE.products.findIndex(x => x.id === UI.editId);
-                STATE.products[idx] = item;
+                if(idx > -1) STATE.products[idx] = item;
             } else {
                 STATE.products.unshift(item);
             }
             
             await cloudSave();
             renderAdmList(); renderGrid(); resetForm();
+            
+            btn.innerHTML = originalText;
+            btn.style.pointerEvents = 'all';
         }
+
         function editProd(id) {
             const p = STATE.products.find(x => x.id === id);
             UI.editId = id;
@@ -1371,12 +1530,17 @@
             updPreview(p.img, 'prev-prod');
             document.getElementById('tab-prod').scrollIntoView();
         }
-        function delProd(id) {
+        
+        async function delProd(id) {
             if(confirm("Delete product?")) {
+                await cloudLoad(); // Sync first
                 STATE.products = STATE.products.filter(x => x.id !== id);
-                cloudSave(); renderAdmList(); renderGrid();
+                await cloudSave(); 
+                renderAdmList(); 
+                renderGrid();
             }
         }
+        
         function resetForm() {
             UI.editId = null;
             document.querySelectorAll('#tab-prod input').forEach(i => i.value = '');
@@ -1397,24 +1561,37 @@
                 </div>`;
             });
         }
+        
         async function saveBanner() {
+            const btn = document.getElementById('btn-save-ban');
+            btn.innerHTML = 'SAVING...';
+            await cloudLoad(); // Sync first
+            
             const title = document.getElementById('bf-title').value;
             const badge = document.getElementById('bf-badge').value;
             const color = document.getElementById('bf-color').value;
             const img = document.getElementById('bf-img').value;
 
-            if(!img) return showToast("Image required", true);
+            if(!img) {
+                 btn.innerHTML = 'ADD BANNER';
+                 return showToast("Image required", true);
+            }
 
             STATE.banners.push({ id: Date.now(), title, badge, color, img });
             await cloudSave();
             renderAdmPromo(); renderBanners();
             document.getElementById('bf-title').value='';
             document.getElementById('bf-img').value='';
+            btn.innerHTML = 'ADD BANNER';
         }
-        function delBan(idx) {
+        
+        async function delBan(idx) {
             if(confirm("Remove banner?")) {
+                await cloudLoad();
                 STATE.banners.splice(idx, 1);
-                cloudSave(); renderAdmPromo(); renderBanners();
+                await cloudSave(); 
+                renderAdmPromo(); 
+                renderBanners();
             }
         }
 
@@ -1429,18 +1606,27 @@
                 </div>`;
             });
         }
+        
         async function saveCat() {
+            const btn = document.getElementById('btn-save-cat');
+            btn.innerHTML = 'SAVING...';
+            await cloudLoad();
+            
             const id = document.getElementById('cf-id').value;
             const name = document.getElementById('cf-name').value;
             if(!id) return;
             STATE.categories.push({ id, name });
-            await cloudSave(); renderAdmCats(); renderCats();
+            await cloudSave(); 
+            renderAdmCats(); renderCats();
             document.getElementById('cf-id').value = ''; document.getElementById('cf-name').value = '';
+            btn.innerHTML = 'CREATE CATEGORY';
         }
-        function delCat(id) {
+        
+        async function delCat(id) {
             if(confirm("Delete category?")) {
+                await cloudLoad();
                 STATE.categories = STATE.categories.filter(c => c.id !== id);
-                cloudSave(); renderAdmCats(); renderCats();
+                await cloudSave(); renderAdmCats(); renderCats();
             }
         }
 
@@ -1473,6 +1659,7 @@
             const role = document.getElementById('uf-role').value;
             if(!id) return showToast("ID Required", true);
             
+            await cloudLoad();
             if(!STATE.users) STATE.users = {};
             STATE.users[id] = role;
             
@@ -1484,6 +1671,7 @@
         async function removeRole(id) {
             if(id == CFG.OWNER_ID) return showToast("Can't remove Owner!", true);
             if(confirm("Revoke rights?")) {
+                await cloudLoad();
                 delete STATE.users[id];
                 await cloudSave();
                 renderAdmUsers();
@@ -1541,8 +1729,11 @@
             c > 0 ? el.classList.add('visible') : el.classList.remove('visible');
         }
         function clearCache() {
-            localStorage.removeItem('cs_user_v4_ultra');
-            location.reload();
+            if(confirm('Reset local cache?')) {
+                localStorage.removeItem('cs_user_v4_ultra');
+                localStorage.removeItem('cs_state_backup');
+                location.reload();
+            }
         }
 
         function showToast(msg, err = false) {
