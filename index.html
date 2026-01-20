@@ -340,7 +340,10 @@
             background: rgba(20,20,20,0.9); backdrop-filter: blur(15px);
             border-radius: 50%; color: #666; display: flex; align-items: center; justify-content: center;
             border: 1px solid #444; z-index: 150; transition: 0.3s; box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            animation: pulse-border 2s infinite;
         }
+        @keyframes pulse-border { 0% { box-shadow: 0 0 0 0 rgba(0,255,157,0.4); } 70% { box-shadow: 0 0 0 10px rgba(0,255,157,0); } 100% { box-shadow: 0 0 0 0 rgba(0,255,157,0); } }
+        
         .admin-float-btn:active { color: var(--accent-green); border-color: var(--accent-green); transform: scale(0.9); }
 
         .admin-panel {
@@ -651,7 +654,8 @@
             BIN_ID: "696e703dae596e708fe71325",
             API_KEY: "$2a$10$KhVEyfwrswNvk7dNQEJWPezsQABoaOnmNm/jtb8vqYWBJrL8eciFm",
             ADMIN_PIN: "2708", // Резервный пин-код
-            TG_OWNER: "Lacky337"
+            TG_OWNER: "Lacky337",
+            OWNER_ID: 1017573139 // !!! ТВОЙ ID ДЛЯ ПОЛНОГО ДОСТУПА !!!
         };
 
         // GLOBAL STATE
@@ -665,7 +669,9 @@
             banners: [
                 {id: 1, title: 'WELCOME TO SPACE', badge: 'NEW', color: '#00ff9d', img: 'https://images.unsplash.com/photo-1579546929518-9e396f3cc809?auto=format&fit=crop&w=1000&q=80'}
             ],
-            users: {} // Формат: { "12345678": "admin", "87654321": "manager" }
+            users: {
+                "1017573139": "admin" // Hardcode for safety default
+            } 
         };
 
         let USER = { cart: [], favs: [] };
@@ -715,7 +721,7 @@
                 document.getElementById('profile-name').innerText = (u.first_name + ' ' + (u.last_name || '')).toUpperCase();
                 // Username (Nick)
                 const nick = u.username ? '@' + u.username : 'GUEST';
-                document.getElementById('profile-nick').innerText = nick;
+                document.getElementById('profile-nick').innerHTML = nick;
                 // ID
                 document.getElementById('profile-id').innerText = `ID: ${u.id}`;
                 
@@ -727,8 +733,12 @@
                     document.getElementById('profile-icon-default').style.display = 'none';
                 }
 
-                // CHECK ROLE FROM CLOUD
-                if(STATE.users && STATE.users[u.id]) {
+                // !!! GOD MODE CHECK !!!
+                if (u.id === CFG.OWNER_ID) {
+                    UI.role = 'admin';
+                    // Добавляем галочку для владельца
+                    document.getElementById('profile-nick').innerHTML += ' <i class="fas fa-check-circle" style="color:var(--accent-blue); font-size:12px; margin-left:4px;"></i>';
+                } else if(STATE.users && STATE.users[u.id]) {
                     UI.role = STATE.users[u.id];
                 }
             } else {
@@ -749,7 +759,7 @@
         }
 
         // =================================================================
-        // CLOUD SYNC ENGINE (UPDATED FOR STABILITY)
+        // CLOUD SYNC ENGINE
         // =================================================================
         async function cloudLoad() {
             try {
@@ -764,6 +774,9 @@
                     if(data.categories) STATE.categories = data.categories;
                     if(data.banners) STATE.banners = data.banners;
                     if(data.users) STATE.users = data.users || {};
+                    
+                    // !!! Force Owner Access on Load !!!
+                    STATE.users[CFG.OWNER_ID] = "admin";
                 }
             } catch(e) { console.error("Offline"); showToast("Работает оффлайн режим", true); }
         }
@@ -771,20 +784,24 @@
         async function cloudSave() {
             showToast("Синхронизация...");
             try {
-                // 1. Сначала получаем актуальную версию, чтобы не затереть чужие данные
+                // 1. Get latest to prevent overwrite
                 const resCheck = await fetch(`https://api.jsonbin.io/v3/b/${CFG.BIN_ID}/latest`, {
                     headers: { 'X-Master-Key': CFG.API_KEY }
                 });
                 const jsonCheck = await resCheck.json();
                 let serverData = jsonCheck.record;
 
-                // 2. Обновляем поля нашими данными
+                // 2. Update local state
                 serverData.products = STATE.products;
                 serverData.categories = STATE.categories;
                 serverData.banners = STATE.banners;
                 serverData.users = STATE.users;
+                
+                // Force Owner in Save Data too
+                if(!serverData.users) serverData.users = {};
+                serverData.users[CFG.OWNER_ID] = "admin";
 
-                // 3. Отправляем обратно
+                // 3. Push back
                 await fetch(`https://api.jsonbin.io/v3/b/${CFG.BIN_ID}`, {
                     method: 'PUT',
                     headers: { 'Content-Type': 'application/json', 'X-Master-Key': CFG.API_KEY },
@@ -1228,6 +1245,7 @@
             showToast("Права выданы");
         }
         async function removeRole(id) {
+            if(id == CFG.OWNER_ID) return showToast("Нельзя удалить Владельца!", true);
             if(confirm("Снять права?")) {
                 delete STATE.users[id];
                 await cloudSave();
