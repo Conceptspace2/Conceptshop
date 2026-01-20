@@ -28,6 +28,7 @@
             --accent-red: #ff2a6d;         /* Errors / Hot */
             --accent-blue: #00ccff;        /* Info / Links */
             --accent-gold: #ffd700;        /* VIP / Admin Status */
+            --accent-orange: #ff9100;      /* History / Orders */
 
             /* UI PROPS */
             --glass: rgba(255, 255, 255, 0.05);
@@ -332,6 +333,26 @@
             border: var(--glass-border);
         }
 
+        /* ORDER HISTORY ITEM */
+        .order-history-item {
+            background: #111; border: 1px solid #222; border-radius: 16px; padding: 15px; margin-bottom: 15px;
+        }
+        .order-head { display: flex; justify-content: space-between; font-size: 12px; color: #666; margin-bottom: 10px; border-bottom: 1px solid #222; padding-bottom: 8px; }
+        .order-info { font-size: 13px; color: #fff; margin-bottom: 5px; }
+
+        /* STATUS SHEET STYLES */
+        .status-level-bar {
+            width: 100%; height: 8px; background: #222; border-radius: 10px; overflow: hidden; margin: 15px 0 5px;
+        }
+        .status-progress { height: 100%; background: linear-gradient(90deg, var(--accent-green), var(--accent-blue)); width: 0%; transition: 1s; }
+        .privilege-item { display: flex; gap: 10px; margin-bottom: 10px; align-items: center; font-size: 13px; }
+        .privilege-item i { color: var(--accent-gold); width: 20px; text-align: center; }
+
+        /* DASHBOARD CHARTS */
+        .chart-bar-container { display: flex; align-items: flex-end; gap: 8px; height: 100px; padding-top: 20px; border-bottom: 1px solid #333; margin-bottom: 10px; }
+        .chart-col { flex: 1; background: var(--accent-green-dim); border-radius: 4px 4px 0 0; position: relative; transition: height 1s; min-height: 5px; }
+        .chart-col:hover { background: var(--accent-green); }
+
         /* =================================================================
            8. ADMIN PANEL
            ================================================================= */
@@ -424,6 +445,13 @@
             </h2>
             <div class="grid" id="fav-grid"></div>
         </div>
+        
+        <div id="view-orders" class="view-section" style="display:none; padding:20px;">
+             <h2 style="padding-bottom:20px; font-size:24px; font-weight:800; display:flex; align-items:center; gap:10px;">
+                История <i class="fas fa-history" style="color:var(--accent-orange); font-size:20px;"></i>
+            </h2>
+            <div id="orders-list"></div>
+        </div>
 
         <div id="view-profile" class="view-section" style="display:none; padding:20px;">
             
@@ -449,11 +477,15 @@
             </div>
             
             <div class="menu-list">
+                <div class="menu-item" onclick="switchView('orders')">
+                    <div class="menu-left"><i class="fas fa-box-open" style="color:var(--accent-orange)"></i> Мои заказы</div>
+                    <i class="fas fa-chevron-right" style="font-size:12px; color:#444;"></i>
+                </div>
                 <div class="menu-item" onclick="window.open('https://t.me/Lacky337')">
                     <div class="menu-left"><i class="fas fa-headset"></i> Поддержка</div>
                     <i class="fas fa-chevron-right" style="font-size:12px; color:#444;"></i>
                 </div>
-                <div class="menu-item" onclick="openAdminHint()">
+                <div class="menu-item" onclick="openStatusManager()">
                     <div class="menu-left"><i class="fas fa-shield-alt"></i> Статус</div>
                     <div id="status-text" style="font-size:10px; color:var(--accent-green); font-weight:800;">CLIENT</div>
                 </div>
@@ -464,7 +496,7 @@
             </div>
 
             <div style="text-align:center; margin-top:30px; color:#333; font-size:10px; font-weight:800; letter-spacing:2px;">
-                CONCEPT SPACE v3.1 ULTRA
+                CONCEPT SPACE v3.2 ULTRA
             </div>
         </div>
 
@@ -535,6 +567,34 @@
         </div>
     </div>
 
+    <div class="sheet" id="sheet-status">
+        <div style="text-align:center; margin-bottom:20px;">
+            <i class="fas fa-shield-alt" style="font-size:40px; color:var(--accent-green); margin-bottom:15px; filter:drop-shadow(0 0 10px var(--accent-green))"></i>
+            <h2 style="font-size:22px; font-weight:900;">ВАШ СТАТУС</h2>
+        </div>
+        
+        <div style="background:#161616; padding:20px; border-radius:18px; border:1px solid #333; margin-bottom:20px;">
+            <div style="display:flex; justify-content:space-between; font-weight:bold; font-size:14px;">
+                <span>CLIENT</span>
+                <span style="color:var(--accent-green)">VIP</span>
+            </div>
+            <div class="status-level-bar">
+                <div class="status-progress" style="width:30%"></div>
+            </div>
+            <div style="font-size:10px; color:#666; margin-top:5px; text-align:right;">До следующего уровня: 3 заказа</div>
+        </div>
+
+        <h3 style="font-size:14px; margin-bottom:15px; color:#fff;">Привилегии уровня</h3>
+        <div class="privilege-item"><i class="fas fa-check"></i> Доступ к каталогу</div>
+        <div class="privilege-item"><i class="fas fa-check"></i> Оформление заказов</div>
+        <div class="privilege-item" style="color:#555"><i class="fas fa-lock"></i> Персональный менеджер (VIP)</div>
+        <div class="privilege-item" style="color:#555"><i class="fas fa-lock"></i> Скидка 10% (VIP)</div>
+
+        <button class="btn-main" id="btn-admin-login" onclick="openAuth()" style="margin-top:auto; background:#222; color:#fff; border:1px solid #333; box-shadow:none;">
+            ВХОД ДЛЯ ПЕРСОНАЛА <i class="fas fa-key"></i>
+        </button>
+    </div>
+
     <div class="admin-float-btn" id="admin-float-btn" onclick="openAuth()" style="display:none;"><i class="fas fa-fingerprint"></i></div>
 
     <div class="admin-panel" id="admin-panel">
@@ -545,15 +605,45 @@
             <i class="fas fa-times" onclick="toggleAdmin(false)" style="font-size:24px; padding:5px; color:#666;"></i>
         </div>
         <div class="adm-tabs">
-            <div class="adm-tab active" onclick="setTab('prod')">ТОВАРЫ</div>
+            <div class="adm-tab active" onclick="setTab('dash')">DASHBOARD</div>
+            <div class="adm-tab" onclick="setTab('prod')">ТОВАРЫ</div>
             <div class="adm-tab" onclick="setTab('promo')">ПРОМО</div>
             <div class="adm-tab" onclick="setTab('cats')">КАТЕГОРИИ</div>
-            <div class="adm-tab" onclick="setTab('users')" style="color:var(--accent-gold)">ПОЛЬЗОВАТЕЛИ</div>
+            <div class="adm-tab" onclick="setTab('users')" style="color:var(--accent-gold)">ЛЮДИ</div>
         </div>
 
         <div class="adm-content" id="adm-content">
             
-            <div id="tab-prod">
+            <div id="tab-dash">
+                <div class="adm-card">
+                    <div style="font-weight:bold; margin-bottom:15px; color:#fff;">Статистика продаж (Неделя)</div>
+                    <div class="chart-bar-container">
+                        <div class="chart-col" style="height:40%" title="Пн"></div>
+                        <div class="chart-col" style="height:60%" title="Вт"></div>
+                        <div class="chart-col" style="height:30%" title="Ср"></div>
+                        <div class="chart-col" style="height:80%; background:var(--accent-purple);" title="Чт"></div>
+                        <div class="chart-col" style="height:50%" title="Пт"></div>
+                        <div class="chart-col" style="height:90%; background:var(--accent-green);" title="Сб"></div>
+                        <div class="chart-col" style="height:70%" title="Вс"></div>
+                    </div>
+                    <div style="display:flex; justify-content:space-between; margin-top:15px;">
+                        <div style="text-align:center;">
+                            <div style="font-size:10px; color:#666;">ЗАКАЗЫ</div>
+                            <div style="font-size:18px; font-weight:900; color:#fff;">142</div>
+                        </div>
+                        <div style="text-align:center;">
+                            <div style="font-size:10px; color:#666;">ОБОРОТ</div>
+                            <div style="font-size:18px; font-weight:900; color:var(--accent-green);">4.2k €</div>
+                        </div>
+                         <div style="text-align:center;">
+                            <div style="font-size:10px; color:#666;">ПРОСМОТРЫ</div>
+                            <div style="font-size:18px; font-weight:900; color:var(--accent-blue);">8.5k</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="tab-prod" style="display:none;">
                 <div class="adm-card">
                     <div style="font-weight:bold; margin-bottom:15px; display:flex; justify-content:space-between; color:#fff;">
                         <span>Редактор товара</span>
@@ -650,12 +740,11 @@
         // CONFIG & STATE
         // =================================================================
         const CFG = {
-            // ВАШИ КЛЮЧИ ИНТЕГРИРОВАНЫ
             BIN_ID: "696e703dae596e708fe71325",
             API_KEY: "$2a$10$KhVEyfwrswNvk7dNQEJWPezsQABoaOnmNm/jtb8vqYWBJrL8eciFm",
             ADMIN_PIN: "2708", // Резервный пин-код
             TG_OWNER: "Lacky337",
-            OWNER_ID: 1017573139 // !!! ТВОЙ ID ДЛЯ ПОЛНОГО ДОСТУПА !!!
+            OWNER_ID: 1017573139
         };
 
         // GLOBAL STATE
@@ -670,11 +759,11 @@
                 {id: 1, title: 'WELCOME TO SPACE', badge: 'NEW', color: '#00ff9d', img: 'https://images.unsplash.com/photo-1579546929518-9e396f3cc809?auto=format&fit=crop&w=1000&q=80'}
             ],
             users: {
-                "1017573139": "admin" // Hardcode for safety default
+                "1017573139": "admin"
             } 
         };
 
-        let USER = { cart: [], favs: [] };
+        let USER = { cart: [], favs: [], orders: [] }; // Added orders array
         let UI = { activeCat: 'all', curProd: null, editId: null, role: 'client' };
         const tg = window.Telegram.WebApp;
 
@@ -690,17 +779,18 @@
 
             initStars();
             
-            // Load Local User Data (BUG FIX: Improved parsing and defaults)
+            // Load Local User Data
             try {
-                const local = localStorage.getItem('cs_user_v3');
+                const local = localStorage.getItem('cs_user_v3_ultra');
                 if(local) {
                     USER = JSON.parse(local);
                     if(!USER.cart) USER.cart = [];
                     if(!USER.favs) USER.favs = [];
+                    if(!USER.orders) USER.orders = [];
                 }
             } catch(e) {
                 console.error("Cache corrupted, resetting user", e);
-                USER = { cart: [], favs: [] };
+                USER = { cart: [], favs: [], orders: [] };
             }
             
             // Sync with Cloud
@@ -711,6 +801,7 @@
 
             // Render UI
             renderAll();
+            renderOrders(); // Render history
             
             // Hide Loader
             setTimeout(() => {
@@ -751,9 +842,6 @@
                 } else if(STATE.users && STATE.users[u.id]) {
                     UI.role = STATE.users[u.id];
                 }
-            } else {
-                 // For browser testing only
-                 // UI.role = 'admin'; 
             }
 
             // Apply Role to UI (Visuals)
@@ -764,20 +852,17 @@
                 st.innerText = "ADMINISTRATOR";
                 st.style.color = 'var(--accent-gold)';
                 document.getElementById('admin-float-btn').style.display = 'flex';
-                // Gold Star for Admin
                 nickEl.innerHTML += ' <i class="fas fa-star" style="color:var(--accent-gold); font-size:12px; margin-left:4px;" title="Admin"></i>';
             } 
             else if(UI.role === 'manager') {
                 st.innerText = "MANAGER";
                 st.style.color = 'var(--accent-blue)';
                 document.getElementById('admin-float-btn').style.display = 'flex';
-                // Blue Check for Manager
                 nickEl.innerHTML += ' <i class="fas fa-check-circle" style="color:var(--accent-blue); font-size:12px; margin-left:4px;" title="Manager"></i>';
             }
             else if(UI.role === 'vip') {
                 st.innerText = "VIP CLIENT";
                 st.style.color = 'var(--accent-purple)';
-                // Purple Diamond for VIP
                 nickEl.innerHTML += ' <i class="fas fa-gem" style="color:var(--accent-purple); font-size:12px; margin-left:4px;" title="VIP"></i>';
             }
             else {
@@ -797,13 +882,10 @@
                 if(res.ok) {
                     const json = await res.json();
                     const data = json.record;
-                    // Merge Data safely
                     if(data.products) STATE.products = data.products;
                     if(data.categories) STATE.categories = data.categories;
                     if(data.banners) STATE.banners = data.banners;
                     if(data.users) STATE.users = data.users || {};
-                    
-                    // !!! Force Owner Access on Load !!!
                     STATE.users[CFG.OWNER_ID] = "admin";
                 }
             } catch(e) { console.error("Offline"); showToast("Работает оффлайн режим", true); }
@@ -812,24 +894,19 @@
         async function cloudSave() {
             showToast("Синхронизация...");
             try {
-                // 1. Get latest to prevent overwrite
                 const resCheck = await fetch(`https://api.jsonbin.io/v3/b/${CFG.BIN_ID}/latest`, {
                     headers: { 'X-Master-Key': CFG.API_KEY }
                 });
                 const jsonCheck = await resCheck.json();
                 let serverData = jsonCheck.record;
 
-                // 2. Update local state
                 serverData.products = STATE.products;
                 serverData.categories = STATE.categories;
                 serverData.banners = STATE.banners;
                 serverData.users = STATE.users;
-                
-                // Force Owner in Save Data too
                 if(!serverData.users) serverData.users = {};
                 serverData.users[CFG.OWNER_ID] = "admin";
 
-                // 3. Push back
                 await fetch(`https://api.jsonbin.io/v3/b/${CFG.BIN_ID}`, {
                     method: 'PUT',
                     headers: { 'Content-Type': 'application/json', 'X-Master-Key': CFG.API_KEY },
@@ -1003,18 +1080,12 @@
             
             UI.curProd._qty = newQ;
             document.getElementById('pd-qty').innerText = newQ;
-            
-            // Calculate temp total price visual
             document.getElementById('pd-price').innerText = (UI.curProd.price * newQ).toFixed(2) + " €";
         }
 
         function addToCart() {
-            // BUG FIX: Ensure we are pushing copies and clean numbers
             const finalQty = parseInt(UI.curProd._qty);
-            
-            if(isNaN(finalQty) || finalQty < 1) {
-                return showToast("Ошибка количества", true);
-            }
+            if(isNaN(finalQty) || finalQty < 1) return showToast("Ошибка количества", true);
 
             const item = {
                 id: UI.curProd.id,
@@ -1032,7 +1103,7 @@
                 USER.cart.push(item);
             }
             
-            saveUser(); // Save immediately to local storage
+            saveUser();
             closeAll();
             showToast("Добавлено в корзину");
             tg.HapticFeedback.notificationOccurred('success');
@@ -1048,7 +1119,7 @@
         }
 
         // =================================================================
-        // CART
+        // CART & ORDERS
         // =================================================================
         function openCart() {
             const l = document.getElementById('cart-list');
@@ -1082,28 +1153,73 @@
 
         function checkout() {
             if(!USER.cart.length) return;
-            let m = "🚀 *NEW ORDER | CONCEPT SPACE*\n\n";
+            
+            // Save to history
+            const total = USER.cart.reduce((a,b) => a + (b.price*b.q), 0).toFixed(2);
+            const order = {
+                id: Date.now().toString().slice(-6),
+                date: new Date().toLocaleDateString(),
+                items: [...USER.cart], // Clone
+                total: total
+            };
+            USER.orders.unshift(order);
+            
+            // Generate Message
+            let m = `🚀 *NEW ORDER #${order.id} | CONCEPT SPACE*\n\n`;
             USER.cart.forEach(x => m += `▪️ ${x.name} (${x.opt}) x${x.q} = ${(x.price*x.q).toFixed(2)}€\n`);
-            m += `\n💰 *TOTAL: ${document.getElementById('cart-total').innerText}*`;
+            m += `\n💰 *TOTAL: ${total}€*`;
             m += `\n👤 User: @${tg.initDataUnsafe?.user?.username || 'Guest'} (ID: ${tg.initDataUnsafe?.user?.id || '?'})`;
+            
+            // Clear cart and save
+            USER.cart = [];
+            saveUser();
+            renderOrders(); // Update history view
+            
             window.open(`https://t.me/${CFG.TG_OWNER}?text=${encodeURIComponent(m)}`);
             tg.close();
         }
 
-        // =================================================================
-        // ADMIN PANEL
-        // =================================================================
-        function openAuth() { document.getElementById('auth-modal').style.display = 'flex'; }
-        function closeAuth() { document.getElementById('auth-modal').style.display = 'none'; }
-        function openAdminHint() { showToast("Доступ запрещен", true); }
+        function renderOrders() {
+            const c = document.getElementById('orders-list');
+            c.innerHTML = '';
+            if(!USER.orders.length) {
+                c.innerHTML = '<div style="color:#555; text-align:center; margin-top:30px;">История пуста</div>';
+                return;
+            }
+            USER.orders.forEach(o => {
+                let itemsHtml = '';
+                o.items.forEach(i => itemsHtml += `<div class="order-info">▪ ${i.name} x${i.q}</div>`);
+                c.innerHTML += `
+                <div class="order-history-item">
+                    <div class="order-head">
+                        <span>#${o.id} | ${o.date}</span>
+                        <span style="color:var(--accent-green)">${o.total} €</span>
+                    </div>
+                    ${itemsHtml}
+                    <div style="text-align:right; font-size:10px; color:#555; margin-top:5px; text-transform:uppercase;">Успешно</div>
+                </div>`;
+            });
+        }
 
+        // =================================================================
+        // ADMIN & STATUS LOGIC (UPDATED)
+        // =================================================================
+        function openStatusManager() {
+            // FIX: Instead of access denied, show status sheet
+            openSheet('sheet-status');
+        }
+
+        function openAuth() { 
+            closeAll(); // Close status sheet if open
+            document.getElementById('auth-modal').style.display = 'flex'; 
+        }
+        function closeAuth() { document.getElementById('auth-modal').style.display = 'none'; }
+        
         function checkAuth() {
-            // Если роль уже admin/manager - пускаем сразу
             if(UI.role === 'admin' || UI.role === 'manager') {
                 grantAdminAccess();
                 return;
             }
-            // Иначе проверяем ПИН
             if(document.getElementById('auth-pin').value === CFG.ADMIN_PIN) {
                 grantAdminAccess();
             } else {
@@ -1119,8 +1235,6 @@
             renderAdmPromo();
             renderAdmCats();
             renderAdmUsers();
-            
-            // Скрыть управление пользователями, если это Менеджер (не Админ)
             if(UI.role === 'manager') {
                 document.querySelector('[onclick="setTab(\'users\')"]').style.display = 'none';
             }
@@ -1134,7 +1248,10 @@
         function setTab(t) {
             document.querySelectorAll('.adm-tab').forEach(x=>x.classList.remove('active'));
             event.target.classList.add('active');
-            ['prod','promo','cats','users'].forEach(id => document.getElementById('tab-'+id).style.display='none');
+            ['dash','prod','promo','cats','users'].forEach(id => {
+                const el = document.getElementById('tab-'+id);
+                if(el) el.style.display='none';
+            });
             document.getElementById('tab-'+t).style.display='block';
         }
 
@@ -1259,7 +1376,7 @@
             }
         }
 
-        // --- ADMIN: USERS (ROLES) ---
+        // --- ADMIN: USERS ---
         function renderAdmUsers() {
             const l = document.getElementById('adm-users-list');
             l.innerHTML = '';
@@ -1347,7 +1464,7 @@
         }
 
         function saveUser() {
-            localStorage.setItem('cs_user_v3', JSON.stringify(USER));
+            localStorage.setItem('cs_user_v3_ultra', JSON.stringify(USER));
             updateCartBadge();
         }
         function updateCartBadge() {
@@ -1357,7 +1474,7 @@
             c > 0 ? el.classList.add('visible') : el.classList.remove('visible');
         }
         function clearCache() {
-            localStorage.removeItem('cs_user_v3');
+            localStorage.removeItem('cs_user_v3_ultra');
             location.reload();
         }
 
